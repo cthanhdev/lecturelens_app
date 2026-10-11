@@ -14,12 +14,17 @@ if (localPropertiesFile.exists()) {
 
 android {
     namespace "com.lecturelens.lecturelens_app"
-    compileSdk 34
+    compileSdk 35
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
 
     defaultConfig {
         applicationId "com.lecturelens.lecturelens_app"
-        minSdk 21
-        targetSdk 34
+        minSdkVersion flutter.minSdkVersion
+        targetSdk 35
         versionCode 1
         versionName "1.0.0"
     }
