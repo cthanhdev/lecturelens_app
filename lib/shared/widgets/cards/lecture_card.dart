@@ -62,13 +62,18 @@ class LectureCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            StatusChip(status: lecture.status),
-                            const SizedBox(width: 8),
-                            SubjectChip(label: '${lecture.subject} • ${lecture.university}'),
-                          ],
+                        Expanded(
+                          child: Row(
+                            children: [
+                              StatusChip(status: lecture.status),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: SubjectChip(label: '${lecture.subject} • ${lecture.university}'),
+                              ),
+                            ],
+                          ),
                         ),
+                        const SizedBox(width: 8),
                         GestureDetector(
                           onTap: onBookmarkTap,
                           child: Container(

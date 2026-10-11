@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/asset_paths.dart';
+import '../../core/providers/app_state_providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../shared/widgets/buttons/ll_primary_button.dart';
 import '../../shared/widgets/dot_background.dart';
@@ -17,14 +20,14 @@ enum SplashState {
 /// !IMPORTANT: Màn Hình Khởi Động (Splash Screen) Toàn Diện
 /// CHỈ DẪN: Bao gồm mascot Cú Mèo, hiệu ứng phát sáng Halo,
 /// và hỗ trợ 4 trạng thái khởi động (Đang tải, Mạng chậm, Lỗi mạng, AI khởi động).
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerProviderStateMixin {
   SplashState _currentState = SplashState.loading;
   double _progress = 0.35;
   late AnimationController _floatController;
@@ -37,10 +40,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       duration: const Duration(seconds: 3),
     )..repeat(reverse: true);
 
-    // Tự động chuyển màn hình sang Onboarding sau 3 giây (nếu không đổi trạng thái test)
+    // Tự động chuyển màn hình sau 3 giây (nếu không đổi trạng thái test)
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted && _currentState == SplashState.loading) {
-        context.go(AppConstants.routeOnboarding);
+        final hasCompleted = ref.read(hasCompletedOnboardingProvider);
+        if (hasCompleted) {
+          context.go(AppConstants.routeLogin);
+        } else {
+          context.go(AppConstants.routeOnboarding);
+        }
       }
     });
   }
@@ -72,27 +80,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         child: SafeArea(
           child: Column(
             children: [
-              // State Switcher Bar for Reviewer / Debug
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.85),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.outline),
-                  ),
-                  child: Row(
-                    children: [
-                      _buildStateTab('1. Tải', SplashState.loading),
-                      _buildStateTab('2. Chậm', SplashState.slow),
-                      _buildStateTab('3. Lỗi', SplashState.error),
-                      _buildStateTab('4. AI', SplashState.aiStartup),
-                    ],
-                  ),
-                ),
-              ),
-
               // Center: Glowing Halo + Mascot + Brand Name
               Expanded(
                 child: Column(
@@ -143,31 +130,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 child: _buildBottomStateContent(),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStateTab(String label, SplashState state) {
-    final isActive = _currentState == state;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => _switchState(state),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          decoration: BoxDecoration(
-            color: isActive ? AppColors.primaryContainer : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: isActive ? Colors.white : AppColors.onSurfaceVariant,
-            ),
           ),
         ),
       ),

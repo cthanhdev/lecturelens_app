@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../constants/app_constants.dart';
 import '../../features/splash/splash_screen.dart';
@@ -14,95 +15,231 @@ import '../../features/search/search_screen.dart';
 import '../../features/notifications/notifications_screen.dart';
 import '../../features/settings/settings_screen.dart';
 
+import 'route_not_found_screen.dart';
+import '../../shared/models/lecture_ui_model.dart';
+
 /// !IMPORTANT: Định tuyến toàn bộ ứng dụng LectureLens bằng GoRouter
-/// CHỈ DẪN: Kết nối 21 màn hình thiết kế. Khi cần thêm route mới hoặc deep link,
-/// cấu hình tại danh sách routes bên dưới.
+/// CHỈ DẪN: Kết nối các màn hình thiết kế, có xử lý errorBuilder (404), deep linking
+/// và hiệu ứng chuyển trang mượt mà (smooth page transitions).
 class AppRouter {
   AppRouter._();
 
+  static Page<dynamic> _buildFadePage({
+    required LocalKey key,
+    required Widget child,
+  }) {
+    return CustomTransitionPage(
+      key: key,
+      child: child,
+      transitionDuration: const Duration(milliseconds: 280),
+      reverseTransitionDuration: const Duration(milliseconds: 220),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeInOut,
+          ),
+          child: child,
+        );
+      },
+    );
+  }
+
+  static Page<dynamic> _buildSlidePage({
+    required LocalKey key,
+    required Widget child,
+    Offset beginOffset = const Offset(0.04, 0),
+  }) {
+    return CustomTransitionPage(
+      key: key,
+      child: child,
+      transitionDuration: const Duration(milliseconds: 260),
+      reverseTransitionDuration: const Duration(milliseconds: 200),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: beginOffset,
+            end: Offset.zero,
+          ).animate(curved),
+          child: FadeTransition(
+            opacity: curved,
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
   static final GoRouter router = GoRouter(
     initialLocation: AppConstants.routeSplash,
+    errorBuilder: (context, state) => RouteNotFoundScreen(
+      errorLocation: state.uri.toString(),
+    ),
     routes: [
       // Splash Screens
       GoRoute(
         path: AppConstants.routeSplash,
-        builder: (context, state) => const SplashScreen(),
+        pageBuilder: (context, state) => _buildFadePage(
+          key: state.pageKey,
+          child: const SplashScreen(),
+        ),
       ),
       GoRoute(
         path: AppConstants.routeSplashAi,
-        builder: (context, state) => const SplashAiStartupScreen(),
+        pageBuilder: (context, state) => _buildFadePage(
+          key: state.pageKey,
+          child: const SplashAiStartupScreen(),
+        ),
       ),
       GoRoute(
         path: AppConstants.routeSplashLoad,
-        builder: (context, state) => const SplashLoadingScreen(),
+        pageBuilder: (context, state) => _buildFadePage(
+          key: state.pageKey,
+          child: const SplashLoadingScreen(),
+        ),
       ),
       GoRoute(
         path: AppConstants.routeSplashSlow,
-        builder: (context, state) => const SplashSlowNetworkScreen(),
+        pageBuilder: (context, state) => _buildFadePage(
+          key: state.pageKey,
+          child: const SplashSlowNetworkScreen(),
+        ),
       ),
       GoRoute(
         path: AppConstants.routeSplashError,
-        builder: (context, state) => const SplashErrorScreen(),
+        pageBuilder: (context, state) => _buildFadePage(
+          key: state.pageKey,
+          child: const SplashErrorScreen(),
+        ),
       ),
 
       // Onboarding & Auth
       GoRoute(
         path: AppConstants.routeOnboarding,
-        builder: (context, state) => const OnboardingScreen(),
+        pageBuilder: (context, state) => _buildFadePage(
+          key: state.pageKey,
+          child: const OnboardingScreen(),
+        ),
       ),
       GoRoute(
         path: AppConstants.routeLogin,
-        builder: (context, state) => const LoginScreen(),
+        pageBuilder: (context, state) => _buildSlidePage(
+          key: state.pageKey,
+          child: const LoginScreen(),
+        ),
       ),
       GoRoute(
         path: AppConstants.routeRegister,
-        builder: (context, state) => const RegisterScreen(),
+        pageBuilder: (context, state) => _buildSlidePage(
+          key: state.pageKey,
+          child: const RegisterScreen(),
+        ),
       ),
 
       // Library (Home)
       GoRoute(
         path: AppConstants.routeLibrary,
-        builder: (context, state) => const LibraryScreen(),
+        pageBuilder: (context, state) => _buildFadePage(
+          key: state.pageKey,
+          child: const LibraryScreen(),
+        ),
       ),
 
       // Upload & Processing
       GoRoute(
         path: AppConstants.routeUpload,
-        builder: (context, state) => const UploadScreen(),
+        pageBuilder: (context, state) => _buildSlidePage(
+          key: state.pageKey,
+          beginOffset: const Offset(0, 0.06),
+          child: const UploadScreen(),
+        ),
       ),
       GoRoute(
         path: AppConstants.routeProcessing,
-        builder: (context, state) => const ProcessingScreen(),
+        pageBuilder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return _buildSlidePage(
+            key: state.pageKey,
+            beginOffset: const Offset(0, 0.06),
+            child: ProcessingScreen(
+              lectureTitle: extra?['title'] as String?,
+              lectureSubject: extra?['subject'] as String?,
+            ),
+          );
+        },
       ),
 
       // Lecture Detail & AI Q&A
       GoRoute(
         path: AppConstants.routeLectureDetail,
-        builder: (context, state) {
-          final id = state.pathParameters['id'] ?? 'lec_1';
-          return LectureDetailScreen(lectureId: id);
+        pageBuilder: (context, state) {
+          final defaultId = LectureUiModel.mockLectures.isNotEmpty
+              ? LectureUiModel.mockLectures.first.id
+              : 'lec_1';
+          final id = state.pathParameters['id'] ?? defaultId;
+          final extra = state.extra as Map<String, dynamic>?;
+          final tabIndex = extra?['initialTabIndex'] as int? ??
+              int.tryParse(state.uri.queryParameters['tab'] ?? '') ??
+              0;
+          return _buildSlidePage(
+            key: state.pageKey,
+            beginOffset: const Offset(0.04, 0),
+            child: LectureDetailScreen(
+              lectureId: id,
+              initialTabIndex: tabIndex,
+              highlightSeconds: extra?['highlightSeconds'] as int?,
+              highlightText: extra?['highlightText'] as String?,
+            ),
+          );
         },
       ),
       GoRoute(
         path: AppConstants.routeLectureAi,
-        builder: (context, state) {
-          final id = state.pathParameters['id'] ?? 'lec_1';
-          return LectureDetailScreen(lectureId: id);
+        pageBuilder: (context, state) {
+          final defaultId = LectureUiModel.mockLectures.isNotEmpty
+              ? LectureUiModel.mockLectures.first.id
+              : 'lec_1';
+          final id = state.pathParameters['id'] ?? defaultId;
+          return _buildSlidePage(
+            key: state.pageKey,
+            beginOffset: const Offset(0.04, 0),
+            child: LectureDetailScreen(
+              lectureId: id,
+              initialTabIndex: 1, // Kích hoạt ngay tab Hỏi đáp AI ✨
+            ),
+          );
         },
       ),
 
       // Search, Notifications & Settings
       GoRoute(
         path: AppConstants.routeSearch,
-        builder: (context, state) => const SearchScreen(),
+        pageBuilder: (context, state) => _buildSlidePage(
+          key: state.pageKey,
+          beginOffset: const Offset(0, 0.04),
+          child: const SearchScreen(),
+        ),
       ),
       GoRoute(
         path: AppConstants.routeNotifications,
-        builder: (context, state) => const NotificationsScreen(),
+        pageBuilder: (context, state) => _buildSlidePage(
+          key: state.pageKey,
+          beginOffset: const Offset(0.04, 0),
+          child: const NotificationsScreen(),
+        ),
       ),
       GoRoute(
         path: AppConstants.routeSettings,
-        builder: (context, state) => const SettingsScreen(),
+        pageBuilder: (context, state) => _buildSlidePage(
+          key: state.pageKey,
+          beginOffset: const Offset(0.04, 0),
+          child: const SettingsScreen(),
+        ),
       ),
     ],
   );

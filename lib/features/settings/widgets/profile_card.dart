@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/providers/app_state_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 
 /// Thẻ Hồ Sơ Sinh Viên
-class ProfileCard extends StatelessWidget {
-  final String name;
-  final String email;
-  final String school;
+class ProfileCard extends ConsumerWidget {
+  final String? name;
+  final String? email;
+  final String? school;
   final VoidCallback? onLogout;
 
   const ProfileCard({
     super.key,
-    this.name = 'Minh Trần',
-    this.email = 'minh.tran@bachkhoa.edu.vn',
-    this.school = 'Kỹ thuật phần mềm • ĐH Bách Khoa',
+    this.name,
+    this.email,
+    this.school,
     this.onLogout,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(userProfileProvider);
+    final displayName = name ?? profile.name;
+    final displayEmail = email ?? profile.email;
+    final displaySchool = school ?? profile.school;
+    final initial = profile.avatarInitial;
+
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -41,10 +49,10 @@ class ProfileCard extends StatelessWidget {
                 ),
               ],
             ),
-            child: const Center(
+            child: Center(
               child: Text(
-                'M',
-                style: TextStyle(
+                initial,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 22,
@@ -58,7 +66,7 @@ class ProfileCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name,
+                  displayName,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.onSurface,
@@ -66,7 +74,7 @@ class ProfileCard extends StatelessWidget {
                       ),
                 ),
                 Text(
-                  school,
+                  displaySchool,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w600,
@@ -74,7 +82,7 @@ class ProfileCard extends StatelessWidget {
                       ),
                 ),
                 Text(
-                  email,
+                  displayEmail,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: AppColors.onSurfaceVariant,
                         fontSize: 11,

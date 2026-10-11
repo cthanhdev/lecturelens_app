@@ -23,12 +23,15 @@ class LlBottomNavBar extends StatelessWidget {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.only(left: 20, right: 20, bottom: 12),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(999),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-            child: Container(
-              height: 60,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                child: Container(
+                  height: 60,
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                 color: AppColors.surfaceCard.withOpacity(0.92),
@@ -65,14 +68,16 @@ class LlBottomNavBar extends StatelessWidget {
                     iconPath: AssetPaths.icNavSettings,
                     label: 'Cài đặt',
                   ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildNavItem(
     BuildContext context, {

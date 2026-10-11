@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../shared/models/lecture_ui_model.dart';
@@ -16,10 +17,16 @@ import 'widgets/tabs/transcript_tab.dart';
 /// 3. Mục lục (TOC phân đoạn chủ đề)
 class LectureDetailScreen extends StatefulWidget {
   final String lectureId;
+  final int initialTabIndex;
+  final int? highlightSeconds;
+  final String? highlightText;
 
   const LectureDetailScreen({
     super.key,
     required this.lectureId,
+    this.initialTabIndex = 0,
+    this.highlightSeconds,
+    this.highlightText,
   });
 
   @override
@@ -34,12 +41,31 @@ class _LectureDetailScreenState extends State<LectureDetailScreen> with SingleTi
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: widget.initialTabIndex.clamp(0, 2),
+    );
 
     _lecture = LectureUiModel.mockLectures.firstWhere(
       (l) => l.id == widget.lectureId,
       orElse: () => LectureUiModel.mockLectures.first,
     );
+
+    if (widget.highlightSeconds != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final min = widget.highlightSeconds! ~/ 60;
+        final sec = (widget.highlightSeconds! % 60).toString().padLeft(2, '0');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✨ Đang làm nổi bật đoạn trích tìm kiếm tại mốc $min:$sec'),
+            duration: const Duration(seconds: 3),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      });
+    }
   }
 
   @override
@@ -68,16 +94,17 @@ class _LectureDetailScreenState extends State<LectureDetailScreen> with SingleTi
         showBack: true,
         showNotifications: false,
         actions: [
-          // Skeleton toggle demo
-          IconButton(
-            icon: Icon(
-              _isLoadingSkeleton ? Icons.visibility : Icons.hourglass_top_rounded,
-              size: 20,
-              color: AppColors.primary,
+          // Skeleton toggle demo (Debug mode only)
+          if (kDebugMode)
+            IconButton(
+              icon: Icon(
+                _isLoadingSkeleton ? Icons.visibility : Icons.hourglass_top_rounded,
+                size: 20,
+                color: AppColors.primary,
+              ),
+              tooltip: 'Xem Shimmer Skeleton',
+              onPressed: () => setState(() => _isLoadingSkeleton = !_isLoadingSkeleton),
             ),
-            tooltip: 'Xem Shimmer Skeleton',
-            onPressed: () => setState(() => _isLoadingSkeleton = !_isLoadingSkeleton),
-          ),
           IconButton(
             icon: const Icon(Icons.share_outlined, size: 20),
             color: AppColors.onSurface,
@@ -132,10 +159,10 @@ class _LectureDetailScreenState extends State<LectureDetailScreen> with SingleTi
                         labelColor: Colors.white,
                         unselectedLabelColor: AppColors.onSurfaceVariant,
                         labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                        tabs: const [
-                          Tab(text: 'Bản ghi'),
-                          Tab(text: 'Hỏi đáp AI ✨'),
-                          Tab(text: 'Mục lục (4)'),
+                        tabs: [
+                          const Tab(text: 'Bản ghi'),
+                          const Tab(text: 'Hỏi đáp AI ✨'),
+                          Tab(text: 'Mục lục (${_lecture.topics.length})'),
                         ],
                       ),
                     ),
@@ -147,6 +174,7 @@ class _LectureDetailScreenState extends State<LectureDetailScreen> with SingleTi
                         children: [
                           TranscriptTab(
                             segments: _lecture.transcripts,
+                            highlightSeconds: widget.highlightSeconds,
                             onSeekSeconds: _seekAudio,
                           ),
                           AiQaTab(

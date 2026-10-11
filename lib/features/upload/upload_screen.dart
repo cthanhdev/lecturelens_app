@@ -34,7 +34,20 @@ class _UploadScreenState extends State<UploadScreen> {
   }
 
   void _handleStartProcessing() {
-    context.push(AppConstants.routeProcessing);
+    context.push(
+      AppConstants.routeProcessing,
+      extra: {
+        'title': _titleController.text.trim().isNotEmpty
+            ? _titleController.text.trim()
+            : 'Lập trình Web - Buổi 6: Kiến trúc Microservices',
+        'subject': _subjectController.text.trim().isNotEmpty
+            ? _subjectController.text.trim()
+            : 'Công nghệ phần mềm',
+        'university': _universityController.text.trim().isNotEmpty
+            ? _universityController.text.trim()
+            : 'ĐH Bách Khoa',
+      },
+    );
   }
 
   @override

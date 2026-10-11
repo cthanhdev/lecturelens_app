@@ -6,11 +6,13 @@ import '../transcript_segment.dart';
 class TranscriptTab extends StatelessWidget {
   final List<TranscriptSegment> segments;
   final ValueChanged<int>? onSeekSeconds;
+  final int? highlightSeconds;
 
   const TranscriptTab({
     super.key,
     required this.segments,
     this.onSeekSeconds,
+    this.highlightSeconds,
   });
 
   @override
@@ -29,8 +31,12 @@ class TranscriptTab extends StatelessWidget {
       itemCount: segments.length,
       itemBuilder: (context, index) {
         final segment = segments[index];
+        final isHighlighted = highlightSeconds != null &&
+            (segment.startSeconds <= highlightSeconds! && (segment.startSeconds + 180) >= highlightSeconds!);
+
         return TranscriptSegmentWidget(
           segment: segment,
+          isHighlighted: isHighlighted,
           onSeek: () => onSeekSeconds?.call(segment.startSeconds),
         );
       },

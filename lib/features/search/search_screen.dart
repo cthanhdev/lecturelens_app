@@ -106,7 +106,14 @@ class _SearchScreenState extends State<SearchScreen> {
                         ...results.map(
                           (res) => SearchResultItemWidget(
                             result: res,
-                            onTap: () => context.push('/lecture/${res.lectureId}'),
+                            onTap: () => context.push(
+                              '/lecture/${res.lectureId}',
+                              extra: {
+                                'initialTabIndex': 0,
+                                'highlightSeconds': res.matchSeconds,
+                                'highlightText': res.snippet,
+                              },
+                            ),
                           ),
                         ),
                       ],

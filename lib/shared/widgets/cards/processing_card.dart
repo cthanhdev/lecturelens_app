@@ -50,16 +50,21 @@ class ProcessingCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        StatusChip(
-                          status: LectureStatus.processing,
-                          progress: lecture.processingProgress,
-                        ),
-                        const SizedBox(width: 8),
-                        SubjectChip(label: lecture.subject),
-                      ],
+                    Expanded(
+                      child: Row(
+                        children: [
+                          StatusChip(
+                            status: LectureStatus.processing,
+                            progress: lecture.processingProgress,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: SubjectChip(label: lecture.subject),
+                          ),
+                        ],
+                      ),
                     ),
+                    const SizedBox(width: 8),
                     const SizedBox(
                       width: 20,
                       height: 20,

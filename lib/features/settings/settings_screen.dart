@@ -14,6 +14,57 @@ import 'widgets/theme_selector.dart';
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
+  void _confirmLogout(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        backgroundColor: AppColors.surfaceCard,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: const BorderSide(color: AppColors.outline),
+        ),
+        title: Row(
+          children: const [
+            Icon(Icons.logout_rounded, color: Color(0xFFE11D48), size: 22),
+            SizedBox(width: 8),
+            Text(
+              'Đăng xuất tài khoản',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+            ),
+          ],
+        ),
+        content: const Text(
+          'Bạn có chắc chắn muốn đăng xuất khỏi LectureLens? Tất cả bài giảng đã lưu trữ vẫn sẽ an toàn trên thiết bị của bạn.',
+          style: TextStyle(fontSize: 14, height: 1.4, color: AppColors.onSurfaceVariant),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogCtx).pop(),
+            child: const Text(
+              'Ở lại học tiếp',
+              style: TextStyle(color: AppColors.onSurfaceVariant, fontWeight: FontWeight.w600),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFE11D48),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 0,
+            ),
+            onPressed: () {
+              Navigator.of(dialogCtx).pop();
+              context.go(AppConstants.routeLogin);
+            },
+            child: const Text('Đăng xuất'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,9 +83,7 @@ class SettingsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 ProfileCard(
-                  onLogout: () {
-                    context.go(AppConstants.routeLogin);
-                  },
+                  onLogout: () => _confirmLogout(context),
                 ),
                 const SizedBox(height: 16),
                 const ThemeSelector(),

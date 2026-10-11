@@ -13,7 +13,14 @@ import 'widgets/processing_timeline.dart';
 /// CHỈ DẪN: Hiển thị thanh tiến trình 68%, linh vật Cú Mèo lắng nghe,
 /// và từng bước trong pipeline AI Whisper & LLM tóm tắt.
 class ProcessingScreen extends StatefulWidget {
-  const ProcessingScreen({super.key});
+  final String? lectureTitle;
+  final String? lectureSubject;
+
+  const ProcessingScreen({
+    super.key,
+    this.lectureTitle,
+    this.lectureSubject,
+  });
 
   @override
   State<ProcessingScreen> createState() => _ProcessingScreenState();
@@ -86,12 +93,23 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Kiến trúc máy tính - Chương 3: Pipeline',
+                        widget.lectureTitle ?? 'Kiến trúc máy tính - Chương 3: Pipeline',
+                        textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: AppColors.primary,
                               fontWeight: FontWeight.bold,
                             ),
                       ),
+                      if (widget.lectureSubject != null) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          widget.lectureSubject!,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: AppColors.onSurfaceVariant,
+                                fontSize: 11,
+                              ),
+                        ),
+                      ],
                       const SizedBox(height: 16),
                       // Progress Bar & Percentage
                       Row(

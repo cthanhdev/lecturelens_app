@@ -9,11 +9,13 @@ import '../../../shared/widgets/chips/timestamp_chip.dart';
 class TranscriptSegmentWidget extends StatelessWidget {
   final TranscriptSegment segment;
   final VoidCallback? onSeek;
+  final bool isHighlighted;
 
   const TranscriptSegmentWidget({
     super.key,
     required this.segment,
     this.onSeek,
+    this.isHighlighted = false,
   });
 
   @override
@@ -22,14 +24,25 @@ class TranscriptSegmentWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 18),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surfaceCard,
+        color: isHighlighted ? AppColors.surfaceContainerLow : AppColors.surfaceCard,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: segment.isKeyPoint
-              ? AppColors.primaryLight
-              : AppColors.outline.withOpacity(0.7),
-          width: segment.isKeyPoint ? 1.5 : 1.0,
+          color: isHighlighted
+              ? AppColors.primary
+              : segment.isKeyPoint
+                  ? AppColors.primaryLight
+                  : AppColors.outline.withOpacity(0.7),
+          width: isHighlighted ? 2.0 : (segment.isKeyPoint ? 1.5 : 1.0),
         ),
+        boxShadow: isHighlighted
+            ? [
+                BoxShadow(
+                  color: AppColors.primary.withOpacity(0.18),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,19 +1,24 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import '../../core/constants/app_constants.dart';
 import '../../core/constants/asset_paths.dart';
+import '../../core/providers/app_state_providers.dart';
 import '../../core/theme/app_colors.dart';
 import 'notification_badge.dart';
 
 /// !IMPORTANT: App Bar chuẩn của LectureLens
 /// CHỈ DẪN: Hiển thị Logo Cú Mèo và tên "LectureLens" bên trái,
 /// Chuông thông báo và Avatar người dùng bên phải với hiệu ứng kính mờ.
-class LlAppBar extends StatelessWidget implements PreferredSizeWidget {
+class LlAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String? title;
   final String? subtitle;
   final bool showBack;
   final bool showLogo;
   final bool showNotifications;
+  final VoidCallback? onBackPressed;
   final VoidCallback? onNotificationTap;
   final VoidCallback? onAvatarTap;
   final List<Widget>? actions;
@@ -25,6 +30,7 @@ class LlAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showBack = false,
     this.showLogo = true,
     this.showNotifications = true,
+    this.onBackPressed,
     this.onNotificationTap,
     this.onAvatarTap,
     this.actions,
@@ -34,7 +40,9 @@ class LlAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize => const Size.fromHeight(60.0);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userProfile = ref.watch(userProfileProvider);
+    final unreadCount = ref.watch(unreadNotificationCountProvider);
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
@@ -55,7 +63,14 @@ class LlAppBar extends StatelessWidget implements PreferredSizeWidget {
                       IconButton(
                         icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
                         color: AppColors.onSurface,
-                        onPressed: () => Navigator.of(context).maybePop(),
+                        onPressed: onBackPressed ??
+                            () {
+                              if (context.canPop()) {
+                                context.pop();
+                              } else {
+                                context.go(AppConstants.routeLibrary);
+                              }
+                            },
                       )
                     else if (showLogo) ...[
                       SvgPicture.asset(
@@ -97,7 +112,7 @@ class LlAppBar extends StatelessWidget implements PreferredSizeWidget {
                     if (actions != null) ...actions!,
                     if (showNotifications) ...[
                       NotificationBadge(
-                        unreadCount: 2,
+                        unreadCount: unreadCount,
                         onTap: onNotificationTap,
                       ),
                       const SizedBox(width: 10),
@@ -119,10 +134,10 @@ class LlAppBar extends StatelessWidget implements PreferredSizeWidget {
                         child: ClipOval(
                           child: Container(
                             color: AppColors.primaryLight,
-                            child: const Center(
+                            child: Center(
                               child: Text(
-                                'M',
-                                style: TextStyle(
+                                userProfile.avatarInitial,
+                                style: const TextStyle(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
