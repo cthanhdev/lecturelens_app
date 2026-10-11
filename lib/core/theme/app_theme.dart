@@ -39,7 +39,7 @@ class AppTheme {
         centerTitle: false,
         iconTheme: IconThemeData(color: AppColors.onSurface),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.surfaceCard,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -82,7 +82,7 @@ class AppTheme {
       ),
       scaffoldBackgroundColor: AppColors.darkCanvas,
       textTheme: AppTypography.createTextTheme(isDark: true),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.darkSurfaceCard,
         elevation: 0,
         shape: RoundedRectangleBorder(

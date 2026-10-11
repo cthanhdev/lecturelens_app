@@ -6,6 +6,7 @@ import '../../shared/widgets/dot_background.dart';
 import '../../shared/widgets/inputs/ll_search_bar.dart';
 import '../../shared/widgets/ll_app_bar.dart';
 import '../../shared/widgets/mascot/cu_meo_empty_state.dart';
+import '../../shared/widgets/mascot/cu_meo_widget.dart';
 import 'widgets/search_cu_meo_tip.dart';
 import 'widgets/search_recent_chips.dart';
 import 'widgets/search_result_item.dart';
