@@ -1,0 +1,52 @@
+name: lecturelens_app
+description: "LectureLens — AI Lecture Companion Mobile App for Students"
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.2.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Navigation & Routing
+  # // CHỈ DẪN: GoRouter quản lý tất cả routes và deep linking trong ứng dụng
+  go_router: ^13.2.0
+
+  # State Management
+  # // !IMPORTANT: Riverpod quản lý state toàn cục (Theme, tabs, filter, mock data)
+  flutter_riverpod: ^2.5.1
+
+  # Vector Icons & Logos
+  # // !IMPORTANT: Tất cả icons và logo sử dụng SVG để đảm bảo độ sắc nét cao nhất
+  # // CHỈ DẪN: Sử dụng SvgPicture.asset(...) để render
+  flutter_svg: ^2.0.10
+
+  # UI Effects & Animations
+  shimmer: ^3.0.0
+  flutter_animate: ^4.5.0
+
+  # Typography
+  # // CHỈ DẪN: GoogleFonts fallback cho Quicksand và Nunito Sans
+  google_fonts: ^6.2.1
+
+  # Formatting
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  # Khai báo tất cả thư mục asset vector SVG và hình ảnh
+  assets:
+    - assets/svg/logo/
+    - assets/svg/icons/nav/
+    - assets/svg/icons/actions/
+    - assets/svg/icons/status/
+    - assets/svg/illustrations/
+    - assets/images/mascot/

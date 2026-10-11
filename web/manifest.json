@@ -1,0 +1,11 @@
+{
+  "name": "LectureLens",
+  "short_name": "LectureLens",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#FFFAF5",
+  "theme_color": "#5445B6",
+  "description": "Biến bài giảng thành kho kiến thức",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
+}

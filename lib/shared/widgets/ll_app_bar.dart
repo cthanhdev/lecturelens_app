@@ -1,0 +1,145 @@
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../core/constants/asset_paths.dart';
+import '../../core/theme/app_colors.dart';
+import 'notification_badge.dart';
+
+/// !IMPORTANT: App Bar chuẩn của LectureLens
+/// CHỈ DẪN: Hiển thị Logo Cú Mèo và tên "LectureLens" bên trái,
+/// Chuông thông báo và Avatar người dùng bên phải với hiệu ứng kính mờ.
+class LlAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String? title;
+  final String? subtitle;
+  final bool showBack;
+  final bool showLogo;
+  final bool showNotifications;
+  final VoidCallback? onNotificationTap;
+  final VoidCallback? onAvatarTap;
+  final List<Widget>? actions;
+
+  const LlAppBar({
+    super.key,
+    this.title,
+    this.subtitle,
+    this.showBack = false,
+    this.showLogo = true,
+    this.showNotifications = true,
+    this.onNotificationTap,
+    this.onAvatarTap,
+    this.actions,
+  });
+
+  @override
+  Size get preferredSize => const Size.fromHeight(60.0);
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          color: AppColors.canvasCream.withOpacity(0.85),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          alignment: Alignment.center,
+          child: SafeArea(
+            bottom: false,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Left side: Back Button or Logo + Title
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (showBack)
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                        color: AppColors.onSurface,
+                        onPressed: () => Navigator.of(context).maybePop(),
+                      )
+                    else if (showLogo) ...[
+                      SvgPicture.asset(
+                        AssetPaths.logoIcon,
+                        width: 32,
+                        height: 32,
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title ?? 'LectureLens',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                        ),
+                        if (subtitle != null)
+                          Text(
+                            subtitle!,
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                  color: AppColors.onSurfaceVariant,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 11,
+                                ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+                // Right side: Custom actions or Notification + Avatar
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (actions != null) ...actions!,
+                    if (showNotifications) ...[
+                      NotificationBadge(
+                        unreadCount: 2,
+                        onTap: onNotificationTap,
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+                    GestureDetector(
+                      onTap: onAvatarTap,
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.surfaceContainerHigh,
+                          border: Border.all(
+                            color: AppColors.primaryContainer.withOpacity(0.3),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: ClipOval(
+                          child: Container(
+                            color: AppColors.primaryLight,
+                            child: const Center(
+                              child: Text(
+                                'M',
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
