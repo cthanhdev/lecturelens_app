@@ -43,7 +43,7 @@ class ProfileCard extends ConsumerWidget {
               color: AppColors.primaryContainer,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primaryContainer.withOpacity(0.24),
+                  color: AppColors.primaryContainer.withValues(alpha: 0.24),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),

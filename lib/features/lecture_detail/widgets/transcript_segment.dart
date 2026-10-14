@@ -31,13 +31,13 @@ class TranscriptSegmentWidget extends StatelessWidget {
               ? AppColors.primary
               : segment.isKeyPoint
                   ? AppColors.primaryLight
-                  : AppColors.outline.withOpacity(0.7),
+                  : AppColors.outline.withValues(alpha: 0.7),
           width: isHighlighted ? 2.0 : (segment.isKeyPoint ? 1.5 : 1.0),
         ),
         boxShadow: isHighlighted
             ? [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.18),
+                  color: AppColors.primary.withValues(alpha: 0.18),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),

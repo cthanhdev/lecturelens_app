@@ -30,7 +30,7 @@ class LibraryFab extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primaryContainer.withOpacity(0.38),
+              color: AppColors.primaryContainer.withValues(alpha: 0.38),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),

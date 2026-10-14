@@ -29,16 +29,16 @@ class WashiTapeAccent extends StatelessWidget {
     Color tapeColor;
     switch (color) {
       case WashiTapeColor.sakuraPink:
-        tapeColor = AppColors.sakuraPink.withOpacity(0.85);
+        tapeColor = AppColors.sakuraPink.withValues(alpha: 0.85);
         break;
       case WashiTapeColor.mintGreen:
-        tapeColor = AppColors.mintGreen.withOpacity(0.85);
+        tapeColor = AppColors.mintGreen.withValues(alpha: 0.85);
         break;
       case WashiTapeColor.butterYellow:
-        tapeColor = AppColors.butterYellow.withOpacity(0.9);
+        tapeColor = AppColors.butterYellow.withValues(alpha: 0.9);
         break;
       case WashiTapeColor.lavender:
-        tapeColor = AppColors.primaryLight.withOpacity(0.9);
+        tapeColor = AppColors.primaryLight.withValues(alpha: 0.9);
         break;
     }
 
@@ -52,7 +52,7 @@ class WashiTapeAccent extends StatelessWidget {
           borderRadius: BorderRadius.circular(2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 3,
               offset: const Offset(0, 1),
             ),

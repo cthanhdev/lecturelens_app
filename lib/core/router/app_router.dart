@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../constants/app_constants.dart';
-import '../../features/splash/splash_screen.dart';
-import '../../features/splash/splash_ai_startup_screen.dart';
-import '../../features/splash/splash_subscreens.dart';
+import '../../features/splash/splash.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/auth/login/login_screen.dart';
 import '../../features/auth/register/register_screen.dart';

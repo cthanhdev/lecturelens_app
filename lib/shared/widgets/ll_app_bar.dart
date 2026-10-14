@@ -47,7 +47,7 @@ class LlAppBar extends ConsumerWidget implements PreferredSizeWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
         child: Container(
-          color: AppColors.canvasCream.withOpacity(0.85),
+          color: AppColors.canvasCream.withValues(alpha: 0.85),
           padding: const EdgeInsets.symmetric(horizontal: 16),
           alignment: Alignment.center,
           child: SafeArea(
@@ -127,7 +127,7 @@ class LlAppBar extends ConsumerWidget implements PreferredSizeWidget {
                           shape: BoxShape.circle,
                           color: AppColors.surfaceContainerHigh,
                           border: Border.all(
-                            color: AppColors.primaryContainer.withOpacity(0.3),
+                            color: AppColors.primaryContainer.withValues(alpha: 0.3),
                             width: 1.5,
                           ),
                         ),

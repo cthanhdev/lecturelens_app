@@ -28,7 +28,7 @@ class OnboardingSlide extends StatelessWidget {
                 height: 220,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColors.primaryLight.withOpacity(0.5),
+                  color: AppColors.primaryLight.withValues(alpha: 0.5),
                 ),
               ),
               SvgPicture.asset(

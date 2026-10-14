@@ -163,8 +163,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                                     shape: BoxShape.circle,
                                     gradient: RadialGradient(
                                       colors: [
-                                        AppColors.primaryLight.withOpacity(0.85),
-                                        AppColors.sakuraPinkLight.withOpacity(0.45),
+                                        AppColors.primaryLight.withValues(alpha: 0.85),
+                                        AppColors.sakuraPinkLight.withValues(alpha: 0.45),
                                         Colors.transparent,
                                       ],
                                     ),
@@ -405,7 +405,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         borderRadius: BorderRadius.circular(999),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 3,
             offset: const Offset(0, 1),
           ),
@@ -423,7 +423,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      barColor.withOpacity(0.85),
+                      barColor.withValues(alpha: 0.85),
                       barColor,
                     ],
                   ),
@@ -444,7 +444,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         gradient: LinearGradient(
                           colors: [
                             Colors.transparent,
-                            Colors.white.withOpacity(0.35),
+                            Colors.white.withValues(alpha: 0.35),
                             Colors.transparent,
                           ],
                         ),

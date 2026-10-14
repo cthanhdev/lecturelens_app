@@ -156,7 +156,7 @@ class _LectureDetailScreenState extends State<LectureDetailScreen> with SingleTi
                           borderRadius: BorderRadius.circular(999),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primaryContainer.withOpacity(0.24),
+                              color: AppColors.primaryContainer.withValues(alpha: 0.24),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),

@@ -40,12 +40,16 @@ class LlSecondaryButton extends StatelessWidget {
                 icon!,
                 const SizedBox(width: 8),
               ],
-              Text(
-                text,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w700,
-                    ),
+              Flexible(
+                child: Text(
+                  text,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
               ),
             ],
           ),

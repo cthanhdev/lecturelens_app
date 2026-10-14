@@ -7,11 +7,11 @@ class LectureDetailSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children: [
           SizedBox(height: 16),
           // Audio Player skeleton
           SkeletonBox(width: double.infinity, height: 140, borderRadius: 24),

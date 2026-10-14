@@ -17,7 +17,7 @@ class LectureCardSkeleton extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: AppShadows.level1,
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Top badge row skeleton
@@ -25,27 +25,27 @@ class LectureCardSkeleton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                children: const [
+                children: [
                   SkeletonBox(width: 80, height: 24, borderRadius: 999),
                   SizedBox(width: 8),
                   SkeletonBox(width: 120, height: 24, borderRadius: 999),
                 ],
               ),
-              const SkeletonBox(width: 28, height: 28, borderRadius: 999),
+              SkeletonBox(width: 28, height: 28, borderRadius: 999),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           // Title skeleton
-          const SkeletonBox(width: double.infinity, height: 20, borderRadius: 6),
-          const SizedBox(height: 8),
-          const SkeletonBox(width: 200, height: 20, borderRadius: 6),
-          const SizedBox(height: 14),
+          SkeletonBox(width: double.infinity, height: 20, borderRadius: 6),
+          SizedBox(height: 8),
+          SkeletonBox(width: 200, height: 20, borderRadius: 6),
+          SizedBox(height: 14),
           // Sticky note citation skeleton
-          const SkeletonBox(width: double.infinity, height: 56, borderRadius: 16),
-          const SizedBox(height: 14),
+          SkeletonBox(width: double.infinity, height: 56, borderRadius: 16),
+          SizedBox(height: 14),
           // Metrics skeleton
           Row(
-            children: const [
+            children: [
               SkeletonBox(width: 70, height: 16, borderRadius: 4),
               SizedBox(width: 12),
               SkeletonBox(width: 60, height: 16, borderRadius: 4),
@@ -53,9 +53,9 @@ class LectureCardSkeleton extends StatelessWidget {
               SkeletonBox(width: 80, height: 16, borderRadius: 4),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           // Button skeleton
-          const SkeletonBox(width: double.infinity, height: 40, borderRadius: 999),
+          SkeletonBox(width: double.infinity, height: 40, borderRadius: 999),
         ],
       ),
     );

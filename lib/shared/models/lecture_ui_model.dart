@@ -102,7 +102,7 @@ class LectureUiModel {
   });
 
   /// Mock data phản ánh chính xác 100% các file thiết kế
-  static List<LectureUiModel> mockLectures = [
+  static List<LectureUiModel> mockLectures = const [
     LectureUiModel(
       id: 'lec_1',
       title: 'Lập trình Web - Bài 5: REST API & JWT Authentication',
@@ -116,13 +116,13 @@ class LectureUiModel {
       resumePositionSeconds: 755, // 12:35
       isBookmarked: true,
       tags: ['# REST API', '# JWT', '# Security', '# HTTP'],
-      topics: const [
+      topics: [
         LectureTopicItem(title: '1. Khái quát kiến trúc RESTful Services', timestamp: '00:00', startSeconds: 0, isCompleted: true),
         LectureTopicItem(title: '2. Cấu trúc Token JWT & Header Payload Signature', timestamp: '12:35', startSeconds: 755, isCompleted: false),
         LectureTopicItem(title: '3. Middleware xác thực trong Express/Spring', timestamp: '24:10', startSeconds: 1450, isCompleted: false),
         LectureTopicItem(title: '4. Best practices bảo mật Refresh Token', timestamp: '37:45', startSeconds: 2265, isCompleted: false),
       ],
-      transcripts: const [
+      transcripts: [
         TranscriptSegment(
           timestamp: '00:05',
           startSeconds: 5,
@@ -144,7 +144,7 @@ class LectureUiModel {
           content: 'Các bạn lưu ý không bao giờ lưu trữ mật khẩu thuần hoặc thông tin bảo mật tuyệt mật bên trong payload của JWT vì Base64 rất dễ bị giải mã.',
         ),
       ],
-      aiMessages: const [
+      aiMessages: [
         AiChatMessage(
           id: 'msg_1',
           sender: 'user',
@@ -185,12 +185,12 @@ class LectureUiModel {
       topicsCount: 6,
       relativeTime: '2 ngày trước',
       tags: ['# Z-Score', '# P-Value < 0.05', '# Định lý giới hạn trung tâm'],
-      topics: const [
+      topics: [
         LectureTopicItem(title: '1. Khái niệm biến ngẫu nhiên liên tục', timestamp: '00:00', startSeconds: 0, isCompleted: true),
         LectureTopicItem(title: '2. Đường cong phân phối hình chuông Gauss', timestamp: '15:20', startSeconds: 920, isCompleted: true),
         LectureTopicItem(title: '3. Quy tắc kiểm định P-Value < 0.05', timestamp: '34:10', startSeconds: 2050, isCompleted: false),
       ],
-      transcripts: const [
+      transcripts: [
         TranscriptSegment(
           timestamp: '00:00',
           startSeconds: 0,

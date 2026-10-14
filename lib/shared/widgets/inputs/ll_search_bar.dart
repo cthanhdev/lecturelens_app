@@ -90,7 +90,7 @@ class _LlSearchBarState extends State<LlSearchBar> {
               decoration: InputDecoration(
                 hintText: widget.hintText,
                 hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.onSurfaceVariant.withOpacity(0.6),
+                      color: AppColors.onSurfaceVariant.withValues(alpha: 0.6),
                     ),
                 border: InputBorder.none,
                 isDense: true,
@@ -123,7 +123,7 @@ class _LlSearchBarState extends State<LlSearchBar> {
             onTap: widget.onMicTap,
             child: Container(
               padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: AppColors.surfaceContainerLow,
                 shape: BoxShape.circle,
               ),

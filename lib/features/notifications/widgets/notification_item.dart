@@ -42,7 +42,7 @@ class NotificationItemWidget extends StatelessWidget {
           color: notification.isRead ? AppColors.surfaceCard : AppColors.surfaceContainerLow,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: notification.isRead ? AppColors.outline : AppColors.primaryContainer.withOpacity(0.3),
+            color: notification.isRead ? AppColors.outline : AppColors.primaryContainer.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -52,7 +52,7 @@ class NotificationItemWidget extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.12),
+                color: iconColor.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, size: 20, color: iconColor),

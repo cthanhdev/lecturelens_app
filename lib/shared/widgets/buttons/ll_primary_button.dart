@@ -77,13 +77,17 @@ class _LlPrimaryButtonState extends State<LlPrimaryButton> {
                             widget.icon!,
                             const SizedBox(width: 8),
                           ],
-                          Text(
-                            widget.text,
-                            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                  color: AppColors.onPrimary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
+                          Flexible(
+                            child: Text(
+                              widget.text,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    color: AppColors.onPrimary,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                            ),
                           ),
                         ],
                       ),

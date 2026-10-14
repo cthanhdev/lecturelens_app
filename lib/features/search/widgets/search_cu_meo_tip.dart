@@ -35,7 +35,7 @@ class SearchCuMeoTip extends StatelessWidget {
                 Text(
                   'Bạn có thể tìm kiếm theo từ khóa lý thuyết, tên công thức, hoặc mốc thời gian giảng dạy.',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.butterYellowDark.withOpacity(0.9),
+                        color: AppColors.butterYellowDark.withValues(alpha: 0.9),
                         fontSize: 12,
                       ),
                 ),

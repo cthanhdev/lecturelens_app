@@ -55,7 +55,7 @@ class LlTextField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.onSurfaceVariant.withOpacity(0.6),
+                  color: AppColors.onSurfaceVariant.withValues(alpha: 0.6),
                 ),
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,

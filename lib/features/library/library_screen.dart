@@ -4,7 +4,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_constants.dart';
-import '../../core/motion/app_motion_tokens.dart';
 import '../../core/theme/app_colors.dart';
 import '../../shared/models/lecture_ui_model.dart';
 import '../../shared/widgets/cards/lecture_card.dart';
@@ -366,7 +365,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 4,
                   ),
                 ]
