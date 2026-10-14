@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/motion/app_motion_tokens.dart';
 import '../../core/theme/app_colors.dart';
 import '../../shared/models/lecture_ui_model.dart';
 import '../../shared/widgets/cards/lecture_card.dart';
@@ -130,7 +132,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
     final fabBottom = bottomNavHeight + 14.0;
 
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       resizeToAvoidBottomInset: false,
       extendBody: true,
       appBar: LlAppBar(
@@ -158,35 +160,44 @@ class _LibraryScreenState extends State<LibraryScreen> {
               },
               child: CustomScrollView(
                 controller: _scrollController,
-                physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                physics: const ClampingScrollPhysics(),
                 slivers: [
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                      padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Header Greeting (Duplicate avatar removed)
                           LibraryHeader(
                             greetingSubtitle: '$_timeGreeting • Bàn học hôm nay đã sẵn sàng!',
-                          ),
-                          const SizedBox(height: 14),
+                          )
+                              .animate()
+                              .fadeIn(duration: 280.ms)
+                              .slideY(begin: -0.05, end: 0, duration: 280.ms, curve: Curves.easeOutCubic),
+                          const SizedBox(height: 16),
 
                           // Search Bar
                           LlSearchBar(
                             onChanged: (val) => setState(() => _searchQuery = val),
                             onTap: () {},
                             onMicTap: () => context.push(AppConstants.routeSearch),
-                          ),
-                          const SizedBox(height: 14),
+                          )
+                              .animate(delay: 60.ms)
+                              .fadeIn(duration: 280.ms)
+                              .slideY(begin: 0.05, end: 0, duration: 280.ms, curve: Curves.easeOutCubic),
+                          const SizedBox(height: 16),
 
                           // Horizontal Filter Chips
                           LibraryFilterTabs(
                             currentFilter: _currentFilter,
                             totalCount: LectureUiModel.mockLectures.length,
                             onFilterChanged: (filter) => setState(() => _currentFilter = filter),
-                          ),
-                          const SizedBox(height: 16),
+                          )
+                              .animate(delay: 110.ms)
+                              .fadeIn(duration: 280.ms)
+                              .slideX(begin: 0.04, end: 0, duration: 280.ms, curve: Curves.easeOutCubic),
+                          const SizedBox(height: 20),
 
                           // Section Title + Interactive Demo View Switcher
                           Row(
@@ -218,7 +229,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                 ),
                             ],
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 16),
                         ],
                       ),
                     ),
@@ -227,11 +238,11 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   // Dynamic Body Content (Normal / Empty / Skeleton)
                   if (_viewMode == LibraryViewMode.skeleton)
                     SliverPadding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 18),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) => const Padding(
-                            padding: EdgeInsets.only(bottom: 16),
+                            padding: EdgeInsets.only(bottom: 20),
                             child: LectureCardSkeleton(),
                           ),
                           childCount: 3,
@@ -241,7 +252,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   else if (_viewMode == LibraryViewMode.empty || lectures.isEmpty)
                     SliverToBoxAdapter(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                         child: CuMeoEmptyState(
                           title: 'Bàn học chưa có bài giảng nào',
                           subtitle: 'Cú Mèo đang ngủ trưa đợi bạn! Hãy tải lên bản ghi âm bài học đầu tiên để bắt đầu học tập nhé.',
@@ -252,35 +263,40 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     )
                   else
                     SliverPadding(
-                      padding: EdgeInsets.fromLTRB(16, 0, 16, fabBottom + 64),
+                      padding: EdgeInsets.fromLTRB(18, 0, 18, bottomNavHeight + 20),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             final lecture = lectures[index];
+                            final cardWidget = lecture.status == LectureStatus.processing
+                                ? ProcessingCard(
+                                    lecture: lecture,
+                                    onCancel: () {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Đã hủy tác vụ xử lý.')),
+                                      );
+                                    },
+                                  )
+                                : LectureCard(
+                                    lecture: lecture,
+                                    onTap: () => context.push('/lecture/${lecture.id}'),
+                                    onPlayResumeTap: () => context.push('/lecture/${lecture.id}'),
+                                    onBookmarkTap: () {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Đã lưu bài giảng "${lecture.title}"'),
+                                          behavior: SnackBarBehavior.floating,
+                                        ),
+                                      );
+                                    },
+                                  );
+
                             return Padding(
-                              padding: const EdgeInsets.only(bottom: 16),
-                              child: lecture.status == LectureStatus.processing
-                                  ? ProcessingCard(
-                                      lecture: lecture,
-                                      onCancel: () {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Đã hủy tác vụ xử lý.')),
-                                        );
-                                      },
-                                    )
-                                  : LectureCard(
-                                      lecture: lecture,
-                                      onTap: () => context.push('/lecture/${lecture.id}'),
-                                      onPlayResumeTap: () => context.push('/lecture/${lecture.id}'),
-                                      onBookmarkTap: () {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text('Đã lưu bài giảng "${lecture.title}"'),
-                                            behavior: SnackBarBehavior.floating,
-                                          ),
-                                        );
-                                      },
-                                    ),
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: cardWidget
+                                  .animate(delay: (140 + index * 55).clamp(0, 420).ms)
+                                  .fadeIn(duration: 300.ms, curve: Curves.easeOutCubic)
+                                  .slideY(begin: 0.06, end: 0, duration: 300.ms, curve: Curves.easeOutCubic),
                             );
                           },
                           childCount: lectures.length,
@@ -296,12 +312,12 @@ class _LibraryScreenState extends State<LibraryScreen> {
               bottom: fabBottom,
               right: 16,
               child: AnimatedSlide(
-                duration: const Duration(milliseconds: 260),
-                curve: Curves.easeInOutCubic,
-                offset: _isChromeVisible ? Offset.zero : const Offset(0, 2.5),
+                duration: const Duration(milliseconds: 320),
+                curve: Curves.easeOutCubic,
+                offset: _isChromeVisible ? Offset.zero : const Offset(0, 2.0),
                 child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeInOut,
+                  duration: const Duration(milliseconds: 240),
+                  curve: Curves.easeOutCubic,
                   opacity: _isChromeVisible ? 1.0 : 0.0,
                   child: IgnorePointer(
                     ignoring: !_isChromeVisible,
@@ -319,9 +335,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
               left: 0,
               right: 0,
               child: AnimatedSlide(
-                duration: const Duration(milliseconds: 260),
-                curve: Curves.easeInOutCubic,
-                offset: _isChromeVisible ? Offset.zero : const Offset(0, 1.5),
+                duration: const Duration(milliseconds: 320),
+                curve: Curves.easeOutCubic,
+                offset: _isChromeVisible ? Offset.zero : const Offset(0, 1.4),
                 child: IgnorePointer(
                   ignoring: !_isChromeVisible,
                   child: LlBottomNavBar(

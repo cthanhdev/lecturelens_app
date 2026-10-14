@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/app_colors.dart';
 
 enum StepStatus {
@@ -19,7 +20,7 @@ class ProcessingStepData {
   });
 }
 
-/// Dòng thời gian tiến trình xử lý AI (Vertical Pipeline Timeline)
+/// Dòng thời gian tiến trình xử lý AI (Vertical Pipeline Timeline) với vòng sáng thở động
 class ProcessingTimeline extends StatelessWidget {
   final List<ProcessingStepData> steps;
 
@@ -101,23 +102,34 @@ class ProcessingTimeline extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           child: const Icon(Icons.check, size: 14, color: Colors.white),
-        );
+        )
+            .animate()
+            .scaleXY(begin: 0.8, end: 1.0, duration: 250.ms, curve: Curves.easeOutBack);
       case StepStatus.inProgress:
         return Container(
-          width: 22,
-          height: 22,
-          decoration: const BoxDecoration(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
             color: AppColors.primaryContainer,
             shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.35),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
+            ],
           ),
           child: const Padding(
-            padding: EdgeInsets.all(4.0),
+            padding: EdgeInsets.all(4.5),
             child: CircularProgressIndicator(
-              strokeWidth: 2,
+              strokeWidth: 2.2,
               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             ),
           ),
-        );
+        )
+            .animate(onPlay: (controller) => controller.repeat(reverse: true))
+            .scaleXY(begin: 0.95, end: 1.08, duration: 900.ms, curve: Curves.easeInOut);
       case StepStatus.pending:
         return Container(
           width: 22,

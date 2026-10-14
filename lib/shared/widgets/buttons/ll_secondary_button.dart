@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import '../interactive/ll_pressable.dart';
 
-/// Secondary Button (Nút viền hoặc nền phụ nhẹ nhàng)
+/// Secondary Button (Nút viền hoặc nền phụ nhẹ nhàng có vi tương tác đàn hồi)
 class LlSecondaryButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -20,37 +21,33 @@ class LlSecondaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
+    return LlPressable(
+      onTap: onPressed,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: AppColors.surfaceContainer,
           borderRadius: BorderRadius.circular(999),
-          onTap: onPressed,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (icon != null) ...[
-                  icon!,
-                  const SizedBox(width: 8),
-                ],
-                Text(
-                  text,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                icon!,
+                const SizedBox(width: 8),
               ],
-            ),
+              Text(
+                text,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            ],
           ),
         ),
       ),

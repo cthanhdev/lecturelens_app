@@ -87,7 +87,7 @@ class _LectureDetailScreenState extends State<LectureDetailScreen> with SingleTi
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: LlAppBar(
         title: _lecture.title,
         subtitle: '${_lecture.subject} • ${_lecture.university}',
@@ -122,14 +122,20 @@ class _LectureDetailScreenState extends State<LectureDetailScreen> with SingleTi
               ? const LectureDetailSkeleton()
               : Column(
                   children: [
-                    // Top Audio Player Capsule
+                    // Top Audio Player Capsule with Hero Transition
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-                      child: AudioPlayerCapsule(
-                        title: _lecture.title,
-                        subtitle: '${_lecture.subject} • 45:20 phút',
-                        totalDuration: Duration(seconds: _lecture.durationSeconds),
-                        initialPosition: Duration(seconds: _lecture.resumePositionSeconds ?? 0),
+                      child: Hero(
+                        tag: 'audio_capsule_${_lecture.id}',
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: AudioPlayerCapsule(
+                            title: _lecture.title,
+                            subtitle: '${_lecture.subject} • 45:20 phút',
+                            totalDuration: Duration(seconds: _lecture.durationSeconds),
+                            initialPosition: Duration(seconds: _lecture.resumePositionSeconds ?? 0),
+                          ),
+                        ),
                       ),
                     ),
 

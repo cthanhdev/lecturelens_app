@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/constants/asset_paths.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/models/lecture_ui_model.dart';
 import '../../../shared/widgets/chips/timestamp_chip.dart';
 
-/// Bubble Chat trong Hỏi Đáp AI Cú Mèo
+/// Bubble Chat trong Hỏi Đáp AI Cú Mèo với hoạt ảnh xuất hiện mượt mà
 class AiChatBubble extends StatelessWidget {
   final AiChatMessage message;
   final VoidCallback? onCitationTap;
@@ -41,7 +42,7 @@ class AiChatBubble extends StatelessWidget {
             const SizedBox(width: 8),
           ],
 
-          // Bubble Container
+          // Bubble Container with Soft Entrance Animation
           Flexible(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -56,7 +57,7 @@ class AiChatBubble extends StatelessWidget {
                 border: isUser ? null : Border.all(color: AppColors.outline),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -88,8 +89,8 @@ class AiChatBubble extends StatelessWidget {
                         message.timestamp,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: isUser
-                                  ? Colors.white.withOpacity(0.7)
-                                  : AppColors.onSurfaceVariant.withOpacity(0.7),
+                                  ? Colors.white.withValues(alpha: 0.7)
+                                  : AppColors.onSurfaceVariant.withValues(alpha: 0.7),
                               fontSize: 10,
                             ),
                       ),
@@ -103,6 +104,10 @@ class AiChatBubble extends StatelessWidget {
           if (isUser) const SizedBox(width: 4),
         ],
       ),
-    );
+    )
+        .animate()
+        .fadeIn(duration: 260.ms, curve: Curves.easeOutCubic)
+        .slideY(begin: 0.1, end: 0, duration: 260.ms, curve: Curves.easeOutCubic)
+        .scaleXY(begin: 0.96, end: 1.0, duration: 260.ms, curve: Curves.easeOutCubic);
   }
 }

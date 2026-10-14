@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import '../interactive/ll_pressable.dart';
 
-/// Circular Icon Button (Bookmark, Share, Mic, Clear, etc.)
+/// Circular Icon Button (Bookmark, Share, Mic, Clear, etc.) với phản hồi chạm đàn hồi
 class LlIconCircleButton extends StatelessWidget {
   final Widget icon;
   final VoidCallback? onPressed;
@@ -18,20 +19,16 @@ class LlIconCircleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: backgroundColor ?? AppColors.surfaceContainerHigh.withOpacity(0.7),
-        shape: BoxShape.circle,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onPressed,
-          child: Center(child: icon),
+    return LlPressable(
+      onTap: onPressed,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: backgroundColor ?? AppColors.surfaceContainerHigh.withValues(alpha: 0.7),
+          shape: BoxShape.circle,
         ),
+        child: Center(child: icon),
       ),
     );
   }

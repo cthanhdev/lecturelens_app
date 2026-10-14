@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../shared/widgets/interactive/ll_pressable.dart';
 
 /// Bộ chọn Giao diện (Sáng / Tối / Tự động)
 class ThemeSelector extends ConsumerWidget {
@@ -81,7 +82,8 @@ class ThemeSelector extends ConsumerWidget {
     final isSelected = currentMode == mode;
 
     return Expanded(
-      child: GestureDetector(
+      child: LlPressable(
+        scaleFactor: 0.93,
         onTap: onTap,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),

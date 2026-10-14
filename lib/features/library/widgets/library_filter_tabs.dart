@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../shared/widgets/interactive/ll_pressable.dart';
 
 enum LibraryFilter {
   all,
@@ -8,7 +9,7 @@ enum LibraryFilter {
   tech,
 }
 
-/// Filter Chips ngang cho Thư Viện Bài Giảng
+/// Filter Chips ngang cho Thư Viện Bài Giảng với vi phản hồi xúc giác
 class LibraryFilterTabs extends StatelessWidget {
   final LibraryFilter currentFilter;
   final ValueChanged<LibraryFilter> onFilterChanged;
@@ -24,6 +25,7 @@ class LibraryFilterTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
@@ -65,7 +67,8 @@ class LibraryFilterTabs extends StatelessWidget {
   }) {
     final isSelected = currentFilter == filter;
 
-    return GestureDetector(
+    return LlPressable(
+      scaleFactor: 0.93,
       onTap: () => onFilterChanged(filter),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -76,14 +79,14 @@ class LibraryFilterTabs extends StatelessWidget {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.primaryContainer.withOpacity(0.25),
+                    color: AppColors.primaryContainer.withValues(alpha: 0.25),
                     blurRadius: 10,
                     offset: const Offset(0, 3),
                   ),
                 ]
               : [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 4,
                     offset: const Offset(0, 1),
                   ),

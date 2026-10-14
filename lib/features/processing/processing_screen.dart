@@ -26,8 +26,11 @@ class ProcessingScreen extends StatefulWidget {
   State<ProcessingScreen> createState() => _ProcessingScreenState();
 }
 
-class _ProcessingScreenState extends State<ProcessingScreen> {
-  final double _progress = 0.68;
+class _ProcessingScreenState extends State<ProcessingScreen>
+    with SingleTickerProviderStateMixin {
+  static const double _targetProgress = 0.68;
+  late final AnimationController _progressController;
+  late final Animation<double> _progressAnimation;
 
   final List<ProcessingStepData> _steps = const [
     ProcessingStepData(
@@ -53,10 +56,30 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _progressController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2200),
+    );
+    _progressAnimation = CurvedAnimation(
+      parent: _progressController,
+      curve: Curves.easeOutCubic,
+    );
+    _progressController.forward();
+  }
+
+  @override
+  void dispose() {
+    _progressController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
-      appBar: LlAppBar(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: const LlAppBar(
         title: 'Tiến trình bài giảng',
         subtitle: 'Cú Mèo đang lắng nghe',
         showBack: true,
@@ -65,6 +88,7 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
       body: DotBackground(
         child: SafeArea(
           child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Column(
               children: [
@@ -111,35 +135,63 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
                         ),
                       ],
                       const SizedBox(height: 16),
-                      // Progress Bar & Percentage
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Tiến độ xử lý',
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  color: AppColors.onSurfaceVariant,
-                                  fontWeight: FontWeight.w600,
+                      // Animated Progress Bar & Percentage
+                      AnimatedBuilder(
+                        animation: _progressAnimation,
+                        builder: (context, _) {
+                          final currentProgress = _targetProgress * _progressAnimation.value;
+                          final percent = (currentProgress * 100).toInt();
+
+                          return Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Tiến độ xử lý',
+                                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                          color: AppColors.onSurfaceVariant,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                  Text(
+                                    '$percent%',
+                                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                          color: AppColors.primaryContainer,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Container(
+                                width: double.infinity,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: AppColors.surfaceContainer,
+                                  borderRadius: BorderRadius.circular(999),
                                 ),
-                          ),
-                          Text(
-                            '${(_progress * 100).toInt()}%',
-                            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  color: AppColors.primaryContainer,
-                                  fontWeight: FontWeight.bold,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(999),
+                                  child: FractionallySizedBox(
+                                    alignment: Alignment.centerLeft,
+                                    widthFactor: currentProgress,
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            AppColors.primary,
+                                            AppColors.primaryContainer,
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(999),
-                        child: LinearProgressIndicator(
-                          value: _progress,
-                          minHeight: 10,
-                          backgroundColor: AppColors.surfaceContainer,
-                          valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primaryContainer),
-                        ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       const SizedBox(height: 8),
                       Row(

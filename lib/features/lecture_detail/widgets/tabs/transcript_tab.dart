@@ -27,7 +27,8 @@ class TranscriptTab extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 90),
+      physics: const ClampingScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
       itemCount: segments.length,
       itemBuilder: (context, index) {
         final segment = segments[index];

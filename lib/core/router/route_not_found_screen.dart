@@ -19,7 +19,7 @@ class RouteNotFoundScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: LlAppBar(
         title: 'Không tìm thấy trang',
         subtitle: 'Lỗi điều hướng 404',

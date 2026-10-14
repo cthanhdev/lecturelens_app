@@ -19,29 +19,34 @@ class StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     if (status == LectureStatus.ready) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
         decoration: BoxDecoration(
-          color: AppColors.mintGreen,
+          color: AppColors.mintGreen.withValues(alpha: 0.75),
           borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: AppColors.mintGreenDark.withValues(alpha: 0.15),
+            width: 0.8,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             SvgPicture.asset(
               AssetPaths.icCheckCircle,
-              width: 14,
-              height: 14,
+              width: 13,
+              height: 13,
               colorFilter: const ColorFilter.mode(
                 AppColors.mintGreenDark,
                 BlendMode.srcIn,
               ),
             ),
-            const SizedBox(width: 5),
+            const SizedBox(width: 4.5),
             Text(
               'Sẵn sàng',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: AppColors.mintGreenDark,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11.5,
                   ),
             ),
           ],
@@ -50,17 +55,21 @@ class StatusChip extends StatelessWidget {
     } else if (status == LectureStatus.processing) {
       final percent = ((progress ?? 0.68) * 100).toInt();
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
         decoration: BoxDecoration(
           color: AppColors.warningContainer,
           borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: AppColors.warningDark.withValues(alpha: 0.15),
+            width: 0.8,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 7,
-              height: 7,
+              width: 6,
+              height: 6,
               decoration: const BoxDecoration(
                 color: AppColors.warning,
                 shape: BoxShape.circle,
@@ -71,7 +80,8 @@ class StatusChip extends StatelessWidget {
               'Đang xử lý ($percent%)',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: AppColors.warningDark,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11.5,
                   ),
             ),
           ],
@@ -79,29 +89,34 @@ class StatusChip extends StatelessWidget {
       );
     } else {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
         decoration: BoxDecoration(
           color: AppColors.softCoral,
           borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: AppColors.coralDark.withValues(alpha: 0.15),
+            width: 0.8,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             SvgPicture.asset(
               AssetPaths.icError,
-              width: 14,
-              height: 14,
+              width: 13,
+              height: 13,
               colorFilter: const ColorFilter.mode(
                 AppColors.coralDark,
                 BlendMode.srcIn,
               ),
             ),
-            const SizedBox(width: 5),
+            const SizedBox(width: 4.5),
             Text(
               'Lỗi kết nối',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: AppColors.coralDark,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11.5,
                   ),
             ),
           ],

@@ -42,3 +42,5 @@ symbols/
 **/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
+# Widget Preview related
+.widget_preview/

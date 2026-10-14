@@ -23,8 +23,8 @@ class SettingsScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           side: const BorderSide(color: AppColors.outline),
         ),
-        title: Row(
-          children: const [
+        title: const Row(
+          children: [
             Icon(Icons.logout_rounded, color: Color(0xFFE11D48), size: 22),
             SizedBox(width: 8),
             Text(
@@ -68,7 +68,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const LlAppBar(
         title: 'Cài đặt & Hồ sơ',
         subtitle: 'Tùy chỉnh bàn học',
@@ -78,6 +78,7 @@ class SettingsScreen extends StatelessWidget {
       body: DotBackground(
         child: SafeArea(
           child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

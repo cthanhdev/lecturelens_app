@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/theme/app_colors.dart';
 import '../../shared/models/notification_ui_model.dart';
 import '../../shared/widgets/dot_background.dart';
 import '../../shared/widgets/ll_app_bar.dart';
@@ -16,7 +15,7 @@ class NotificationsScreen extends StatelessWidget {
     final notifications = NotificationUiModel.mockNotifications;
 
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const LlAppBar(
         title: 'Thông báo',
         subtitle: 'Cập nhật từ giảng đường',
@@ -26,7 +25,8 @@ class NotificationsScreen extends StatelessWidget {
       body: DotBackground(
         child: SafeArea(
           child: ListView.builder(
-            padding: const EdgeInsets.all(16),
+            physics: const ClampingScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
             itemCount: notifications.length,
             itemBuilder: (context, index) {
               final notif = notifications[index];

@@ -31,8 +31,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   void _onNext() {
     if (_currentIndex < OnboardingSlideData.slides.length - 1) {
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
       );
     } else {
       _completeOnboarding();
@@ -48,7 +48,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final isLast = _currentIndex == OnboardingSlideData.slides.length - 1;
 
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: DotBackground(
         child: SafeArea(
           child: Column(
@@ -76,6 +76,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               // PageView Slides
               Expanded(
                 child: PageView.builder(
+                  physics: const ClampingScrollPhysics(),
                   controller: _pageController,
                   itemCount: OnboardingSlideData.slides.length,
                   onPageChanged: (index) => setState(() => _currentIndex = index),

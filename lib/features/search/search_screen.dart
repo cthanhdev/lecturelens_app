@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../shared/models/search_result_ui_model.dart';
@@ -6,7 +7,6 @@ import '../../shared/widgets/dot_background.dart';
 import '../../shared/widgets/inputs/ll_search_bar.dart';
 import '../../shared/widgets/ll_app_bar.dart';
 import '../../shared/widgets/mascot/cu_meo_empty_state.dart';
-import '../../shared/widgets/mascot/cu_meo_widget.dart';
 import 'widgets/search_cu_meo_tip.dart';
 import 'widgets/search_recent_chips.dart';
 import 'widgets/search_result_item.dart';
@@ -48,8 +48,8 @@ class _SearchScreenState extends State<SearchScreen> {
     final results = _results;
 
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
-      appBar: LlAppBar(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: const LlAppBar(
         title: 'Tìm kiếm toàn cục',
         subtitle: 'Kho kiến thức bài giảng',
         showBack: true,
@@ -68,15 +68,18 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
 
-              // Content Area
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  physics: const ClampingScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (_query.isEmpty) ...[
-                        const SearchCuMeoTip(),
+                        const SearchCuMeoTip()
+                            .animate()
+                            .fadeIn(duration: 250.ms)
+                            .slideY(begin: 0.05, end: 0, duration: 250.ms),
                         const SizedBox(height: 20),
                         SearchRecentChips(
                           recentSearches: _recentSearches,
@@ -84,14 +87,20 @@ class _SearchScreenState extends State<SearchScreen> {
                             _searchController.text = term;
                             setState(() => _query = term);
                           },
-                        ),
+                        )
+                            .animate(delay: 80.ms)
+                            .fadeIn(duration: 250.ms)
+                            .slideY(begin: 0.05, end: 0, duration: 250.ms),
                       ] else if (results.isEmpty) ...[
                         const SizedBox(height: 20),
                         CuMeoEmptyState(
                           title: 'Không tìm thấy kết quả',
                           subtitle: 'Cú Mèo không tìm thấy đoạn bài giảng nào khớp với "$_query". Bạn hãy thử từ khóa ngắn hơn nhé!',
                           variant: CuMeoVariant.sleeping,
-                        ),
+                        )
+                            .animate()
+                            .fadeIn(duration: 250.ms)
+                            .scaleXY(begin: 0.95, end: 1.0, duration: 250.ms),
                       ] else ...[
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12),
@@ -103,18 +112,25 @@ class _SearchScreenState extends State<SearchScreen> {
                                 ),
                           ),
                         ),
-                        ...results.map(
-                          (res) => SearchResultItemWidget(
-                            result: res,
-                            onTap: () => context.push(
-                              '/lecture/${res.lectureId}',
-                              extra: {
-                                'initialTabIndex': 0,
-                                'highlightSeconds': res.matchSeconds,
-                                'highlightText': res.snippet,
-                              },
-                            ),
-                          ),
+                        ...results.asMap().entries.map(
+                          (entry) {
+                            final index = entry.key;
+                            final res = entry.value;
+                            return SearchResultItemWidget(
+                              result: res,
+                              onTap: () => context.push(
+                                '/lecture/${res.lectureId}',
+                                extra: {
+                                  'initialTabIndex': 0,
+                                  'highlightSeconds': res.matchSeconds,
+                                  'highlightText': res.snippet,
+                                },
+                              ),
+                            )
+                                .animate(delay: (index * 45).clamp(0, 300).ms)
+                                .fadeIn(duration: 240.ms, curve: Curves.easeOutCubic)
+                                .slideY(begin: 0.05, end: 0, duration: 240.ms, curve: Curves.easeOutCubic);
+                          },
                         ),
                       ],
                     ],

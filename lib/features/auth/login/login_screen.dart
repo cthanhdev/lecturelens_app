@@ -16,11 +16,12 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: DotBackground(
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

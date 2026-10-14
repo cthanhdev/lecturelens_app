@@ -53,8 +53,8 @@ class _UploadScreenState extends State<UploadScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
-      appBar: LlAppBar(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: const LlAppBar(
         title: 'Tải bản ghi lên',
         subtitle: 'Bàn học của bạn',
         showBack: true,
@@ -63,6 +63,7 @@ class _UploadScreenState extends State<UploadScreen> {
       body: DotBackground(
         child: SafeArea(
           child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

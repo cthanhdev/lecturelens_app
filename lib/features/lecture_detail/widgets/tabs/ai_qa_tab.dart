@@ -77,6 +77,7 @@ class _AiQaTabState extends State<AiQaTab> {
           height: 42,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: ListView(
+            physics: const ClampingScrollPhysics(),
             scrollDirection: Axis.horizontal,
             children: [
               _buildSuggestionChip('✨ Tóm tắt 3 ý chính'),
@@ -89,6 +90,7 @@ class _AiQaTabState extends State<AiQaTab> {
         // Chat Message List (reverse: true)
         Expanded(
           child: ListView.builder(
+            physics: const ClampingScrollPhysics(),
             reverse: true,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             itemCount: _reversedMessages.length,
@@ -110,8 +112,8 @@ class _AiQaTabState extends State<AiQaTab> {
         Container(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
           decoration: BoxDecoration(
-            color: AppColors.canvasCream,
-            border: Border(top: BorderSide(color: AppColors.outline.withOpacity(0.8))),
+            color: Theme.of(context).scaffoldBackgroundColor,
+            border: Border(top: BorderSide(color: AppColors.outline.withValues(alpha: 0.8))),
           ),
           child: Row(
             children: [

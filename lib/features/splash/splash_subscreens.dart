@@ -5,14 +5,14 @@ import '../../core/theme/app_colors.dart';
 import '../../shared/widgets/buttons/ll_primary_button.dart';
 import '../../shared/widgets/dot_background.dart';
 
-/// Màn hình Splash: Đang Tải (Network Check)
+/// Màn hình Splash: Đang Tải Dữ Liệu
 class SplashLoadingScreen extends StatelessWidget {
   const SplashLoadingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: DotBackground(
         child: SafeArea(
           child: Center(
@@ -21,12 +21,15 @@ class SplashLoadingScreen extends StatelessWidget {
               children: [
                 SvgPicture.asset(AssetPaths.logoSplash, width: 150, height: 180),
                 const SizedBox(height: 24),
-                const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryContainer),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(999),
+                  child: const SizedBox(
+                    width: 220,
+                    height: 8,
+                    child: LinearProgressIndicator(
+                      backgroundColor: AppColors.surfaceContainer,
+                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryContainer),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -35,6 +38,13 @@ class SplashLoadingScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.onSurface,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Đang đồng bộ máy chủ LectureLens',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.onSurfaceVariant,
                       ),
                 ),
               ],
@@ -53,7 +63,7 @@ class SplashSlowNetworkScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: DotBackground(
         child: SafeArea(
           child: Center(
@@ -67,9 +77,9 @@ class SplashSlowNetworkScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.warningContainer.withOpacity(0.5),
+                      color: AppColors.warningContainer.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.warning.withOpacity(0.3)),
+                      border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
                     ),
                     child: Column(
                       children: [
@@ -110,12 +120,12 @@ class SplashErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: DotBackground(
         child: SafeArea(
           child: Center(
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -124,9 +134,9 @@ class SplashErrorScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
-                      color: AppColors.softCoral.withOpacity(0.5),
+                      color: AppColors.softCoral.withValues(alpha: 0.5),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.coralDark.withOpacity(0.2)),
+                      border: Border.all(color: AppColors.coralDark.withValues(alpha: 0.2)),
                     ),
                     child: Column(
                       children: [

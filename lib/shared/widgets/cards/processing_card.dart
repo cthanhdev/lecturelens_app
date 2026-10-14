@@ -4,11 +4,12 @@ import '../../../core/theme/app_shadows.dart';
 import '../../models/lecture_ui_model.dart';
 import '../chips/status_chip.dart';
 import '../chips/subject_chip.dart';
+import '../interactive/ll_pressable.dart';
 import '../washi_tape/washi_tape_accent.dart';
 
 /// !IMPORTANT: Thẻ Bài Giảng Đang Xử Lý (Processing Lecture Card)
-/// CHỈ DẪN: Hiển thị thanh tiến trình 68%, trạng thái AI nhận diện giọng nói và nút Hủy
-class ProcessingCard extends StatelessWidget {
+/// CHỈ DẪN: Hiển thị thanh tiến trình tự động chạy sống động, trạng thái AI nhận diện giọng nói và nút Hủy
+class ProcessingCard extends StatefulWidget {
   final LectureUiModel lecture;
   final VoidCallback? onCancel;
 
@@ -19,16 +20,53 @@ class ProcessingCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final progressPercent = (lecture.processingProgress * 100).toInt();
+  State<ProcessingCard> createState() => _ProcessingCardState();
+}
 
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceCard,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: AppShadows.level1,
-      ),
+class _ProcessingCardState extends State<ProcessingCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animController;
+  late final Animation<double> _anim;
+
+  @override
+  void initState() {
+    super.initState();
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    );
+    _anim = CurvedAnimation(
+      parent: _animController,
+      curve: Curves.easeOutCubic,
+    );
+    _animController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _anim,
+      builder: (context, _) {
+        final currentProgress = widget.lecture.processingProgress * _anim.value;
+        final progressPercent = (currentProgress * 100).toInt();
+
+        return Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: AppColors.surfaceCard,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: AppColors.outline.withValues(alpha: 0.7),
+              width: 1,
+            ),
+            boxShadow: AppShadows.level1,
+          ),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -42,7 +80,7 @@ class ProcessingCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(18),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -55,16 +93,19 @@ class ProcessingCard extends StatelessWidget {
                         children: [
                           StatusChip(
                             status: LectureStatus.processing,
-                            progress: lecture.processingProgress,
+                            progress: currentProgress,
                           ),
                           const SizedBox(width: 8),
                           Expanded(
-                            child: SubjectChip(label: lecture.subject),
+                            child: SubjectChip(
+                              label: widget.lecture.subject,
+                              secondaryLabel: widget.lecture.university,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 10),
                     const SizedBox(
                       width: 20,
                       height: 20,
@@ -75,20 +116,26 @@ class ProcessingCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
+
                 // Lecture Title
                 Text(
-                  lecture.title,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
+                  widget.lecture.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 17.5,
                         color: AppColors.onSurface,
+                        height: 1.38,
+                        letterSpacing: -0.2,
                       ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 16),
+
                 // Processing Box
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
                     color: AppColors.surfaceContainerLow,
                     borderRadius: BorderRadius.circular(16),
@@ -125,14 +172,30 @@ class ProcessingCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      // Progress Bar
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(999),
-                        child: LinearProgressIndicator(
-                          value: lecture.processingProgress,
-                          minHeight: 8,
-                          backgroundColor: AppColors.surfaceContainer,
-                          valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primaryContainer),
+                      // Animated Progress Bar
+                      Container(
+                        width: double.infinity,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceContainer,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(999),
+                          child: FractionallySizedBox(
+                            alignment: Alignment.centerLeft,
+                            widthFactor: currentProgress.clamp(0.0, 1.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.primary,
+                                    AppColors.primaryContainer,
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -140,14 +203,14 @@ class ProcessingCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            lecture.processingStatusText ?? 'Đang tách chủ đề & lập mục lục...',
+                            widget.lecture.processingStatusText ?? 'Đang tách chủ đề & lập mục lục...',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                   fontStyle: FontStyle.italic,
                                   fontSize: 12,
                                 ),
                           ),
                           Text(
-                            lecture.remainingTimeText ?? '~ 45 giây nữa',
+                            widget.lecture.remainingTimeText ?? '~ 45 giây nữa',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                   fontSize: 12,
                                 ),
@@ -171,26 +234,25 @@ class ProcessingCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          lecture.audioFileName ?? 'Bản ghi phòng học (58.4 MB)',
+                          widget.lecture.audioFileName ?? 'Bản ghi phòng học (58.4 MB)',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: AppColors.onSurfaceVariant,
                               ),
                         ),
                       ],
                     ),
-                    TextButton(
-                      onPressed: onCancel,
-                      style: TextButton.styleFrom(
+                    LlPressable(
+                      scaleFactor: 0.92,
+                      onTap: widget.onCancel,
+                      child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: Text(
-                        'Hủy tác vụ',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        child: Text(
+                          'Hủy tác vụ',
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
                       ),
                     ),
                   ],
@@ -200,6 +262,8 @@ class ProcessingCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+      },
     );
   }
 }

@@ -4,12 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/constants/asset_paths.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_shadows.dart';
+import '../interactive/ll_pressable.dart';
 import 'audio_progress_bar.dart';
 import 'audio_waveform.dart';
 
 /// !IMPORTANT: Floating Frosted Glass Audio Capsule (Viên nhộng phát âm thanh)
 /// CHỈ DẪN: Thanh phát âm thanh kính mờ (BackdropFilter 16dp blur)
-/// Tích hợp đầy đủ nút Play/Pause, Tua 10s trước/sau, Tốc độ 1.0x/1.2x/1.5x và waveform
+/// Tích hợp đầy đủ nút Play/Pause, Tua 10s trước/sau, Tốc độ 1.0x/1.2x/1.5x và waveform với vi tương tác xúc giác.
 class AudioPlayerCapsule extends StatefulWidget {
   final String title;
   final String subtitle;
@@ -76,11 +77,11 @@ class _AudioPlayerCapsuleState extends State<AudioPlayerCapsule> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surfaceCard.withOpacity(0.92),
+        color: AppColors.surfaceCard.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(24),
         boxShadow: AppShadows.level2,
         border: Border.all(
-          color: AppColors.outline.withOpacity(0.7),
+          color: AppColors.outline.withValues(alpha: 0.7),
           width: 1,
         ),
       ),
@@ -120,7 +121,8 @@ class _AudioPlayerCapsuleState extends State<AudioPlayerCapsule> {
                         ],
                       ),
                     ),
-                    GestureDetector(
+                    LlPressable(
+                      scaleFactor: 0.92,
                       onTap: _cycleSpeed,
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -158,24 +160,29 @@ class _AudioPlayerCapsuleState extends State<AudioPlayerCapsule> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IconButton(
-                      onPressed: _rewind10s,
-                      icon: SvgPicture.asset(
-                        AssetPaths.icRewind,
-                        width: 20,
-                        height: 20,
-                        colorFilter: const ColorFilter.mode(
-                          AppColors.onSurfaceVariant,
-                          BlendMode.srcIn,
+                    LlPressable(
+                      scaleFactor: 0.88,
+                      onTap: _rewind10s,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SvgPicture.asset(
+                          AssetPaths.icRewind,
+                          width: 20,
+                          height: 20,
+                          colorFilter: const ColorFilter.mode(
+                            AppColors.onSurfaceVariant,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    GestureDetector(
+                    const SizedBox(width: 14),
+                    LlPressable(
+                      scaleFactor: 0.92,
                       onTap: _togglePlay,
                       child: Container(
-                        width: 48,
-                        height: 48,
+                        width: 50,
+                        height: 50,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           gradient: const LinearGradient(
@@ -186,7 +193,7 @@ class _AudioPlayerCapsuleState extends State<AudioPlayerCapsule> {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primaryContainer.withOpacity(0.35),
+                              color: AppColors.primaryContainer.withValues(alpha: 0.35),
                               blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
@@ -205,16 +212,20 @@ class _AudioPlayerCapsuleState extends State<AudioPlayerCapsule> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    IconButton(
-                      onPressed: _forward10s,
-                      icon: SvgPicture.asset(
-                        AssetPaths.icForward,
-                        width: 20,
-                        height: 20,
-                        colorFilter: const ColorFilter.mode(
-                          AppColors.onSurfaceVariant,
-                          BlendMode.srcIn,
+                    const SizedBox(width: 14),
+                    LlPressable(
+                      scaleFactor: 0.88,
+                      onTap: _forward10s,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SvgPicture.asset(
+                          AssetPaths.icForward,
+                          width: 20,
+                          height: 20,
+                          colorFilter: const ColorFilter.mode(
+                            AppColors.onSurfaceVariant,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       ),
                     ),

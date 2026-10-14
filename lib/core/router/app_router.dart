@@ -32,14 +32,88 @@ class AppRouter {
       key: key,
       child: child,
       transitionDuration: const Duration(milliseconds: 280),
-      reverseTransitionDuration: const Duration(milliseconds: 220),
+      reverseTransitionDuration: const Duration(milliseconds: 240),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: CurvedAnimation(
-            parent: animation,
-            curve: Curves.easeInOut,
+        final inCurved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+        final outCurved = CurvedAnimation(
+          parent: secondaryAnimation,
+          curve: Curves.easeInCubic,
+          reverseCurve: Curves.easeOutCubic,
+        );
+
+        return ColoredBox(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: FadeTransition(
+            opacity: Tween<double>(begin: 1.0, end: 0.0).animate(outCurved),
+            child: FadeTransition(
+              opacity: inCurved,
+              child: child,
+            ),
           ),
-          child: child,
+        );
+      },
+    );
+  }
+
+  /// !IMPORTANT: Chuyển cảnh Shared-Surface mượt mà dành riêng cho các màn hình Auth (Login <-> Register)
+  /// Tránh tình trạng hai form đè chồng mờ lên nhau gây giật hay bóng mờ chữ (double-exposure).
+  static Page<dynamic> _buildAuthPage({
+    required LocalKey key,
+    required Widget child,
+  }) {
+    return CustomTransitionPage(
+      key: key,
+      child: child,
+      transitionDuration: const Duration(milliseconds: 320),
+      reverseTransitionDuration: const Duration(milliseconds: 280),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        // Màn hình cũ: thu nhỏ nhẹ và mờ dần nhanh chóng trong 40% đầu
+        final outCurved = CurvedAnimation(
+          parent: secondaryAnimation,
+          curve: Curves.easeInCubic,
+          reverseCurve: Curves.easeOutCubic,
+        );
+        final outFade = Tween<double>(begin: 1.0, end: 0.0).animate(
+          CurvedAnimation(
+            parent: secondaryAnimation,
+            curve: const Interval(0.0, 0.42, curve: Curves.easeIn),
+          ),
+        );
+        final outScale = Tween<double>(begin: 1.0, end: 0.965).animate(outCurved);
+
+        // Màn hình mới: phóng to nhẹ từ 0.965 lên 1.0 và hiện dần từ 22%
+        final inCurved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+        final inFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
+            parent: animation,
+            curve: const Interval(0.22, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
+        final inScale = Tween<double>(begin: 0.965, end: 1.0).animate(inCurved);
+
+        return ColoredBox(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: FadeTransition(
+            opacity: outFade,
+            child: ScaleTransition(
+              scale: outScale,
+              child: FadeTransition(
+                opacity: inFade,
+                child: ScaleTransition(
+                  scale: inScale,
+                  child: child,
+                ),
+              ),
+            ),
+          ),
         );
       },
     );
@@ -53,22 +127,70 @@ class AppRouter {
     return CustomTransitionPage(
       key: key,
       child: child,
-      transitionDuration: const Duration(milliseconds: 260),
-      reverseTransitionDuration: const Duration(milliseconds: 200),
+      transitionDuration: const Duration(milliseconds: 320),
+      reverseTransitionDuration: const Duration(milliseconds: 260),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        final curved = CurvedAnimation(
+        final curvedIn = CurvedAnimation(
           parent: animation,
           curve: Curves.easeOutCubic,
           reverseCurve: Curves.easeInCubic,
         );
-        return SlideTransition(
-          position: Tween<Offset>(
-            begin: beginOffset,
-            end: Offset.zero,
-          ).animate(curved),
-          child: FadeTransition(
-            opacity: curved,
-            child: child,
+        final curvedOut = CurvedAnimation(
+          parent: secondaryAnimation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+
+        // Trang đang vào
+        final primarySlide = Tween<Offset>(
+          begin: beginOffset,
+          end: Offset.zero,
+        ).animate(curvedIn);
+
+        final primaryFade = Tween<double>(
+          begin: 0.0,
+          end: 1.0,
+        ).animate(
+          CurvedAnimation(
+            parent: animation,
+            curve: const Interval(0.12, 1.0, curve: Curves.easeOutCubic),
+            reverseCurve: const Interval(0.0, 0.88, curve: Curves.easeInCubic),
+          ),
+        );
+
+        final primaryScale = Tween<double>(
+          begin: 0.985,
+          end: 1.0,
+        ).animate(curvedIn);
+
+        // Trang bị đẩy về sau (thoát nhẹ để không bị chồng lớp đè)
+        final secondarySlide = Tween<Offset>(
+          begin: Offset.zero,
+          end: Offset(-beginOffset.dx * 0.5, -beginOffset.dy * 0.5),
+        ).animate(curvedOut);
+
+        final secondaryFade = Tween<double>(
+          begin: 1.0,
+          end: 0.7,
+        ).animate(curvedOut);
+
+        return ColoredBox(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          child: SlideTransition(
+            position: secondarySlide,
+            child: FadeTransition(
+              opacity: secondaryFade,
+              child: SlideTransition(
+                position: primarySlide,
+                child: FadeTransition(
+                  opacity: primaryFade,
+                  child: ScaleTransition(
+                    scale: primaryScale,
+                    child: child,
+                  ),
+                ),
+              ),
+            ),
           ),
         );
       },
@@ -128,14 +250,14 @@ class AppRouter {
       ),
       GoRoute(
         path: AppConstants.routeLogin,
-        pageBuilder: (context, state) => _buildSlidePage(
+        pageBuilder: (context, state) => _buildAuthPage(
           key: state.pageKey,
           child: const LoginScreen(),
         ),
       ),
       GoRoute(
         path: AppConstants.routeRegister,
-        pageBuilder: (context, state) => _buildSlidePage(
+        pageBuilder: (context, state) => _buildAuthPage(
           key: state.pageKey,
           child: const RegisterScreen(),
         ),

@@ -21,7 +21,8 @@ class TableOfContentsTab extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 90),
+      physics: const ClampingScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
       itemCount: topics.length,
       itemBuilder: (context, index) {
         final topic = topics[index];

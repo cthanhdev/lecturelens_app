@@ -16,11 +16,12 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.canvasCream,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: DotBackground(
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -82,7 +83,13 @@ class RegisterScreen extends StatelessWidget {
                             ),
                       ),
                       TextButton(
-                        onPressed: () => context.go(AppConstants.routeLogin),
+                        onPressed: () {
+                          if (context.canPop()) {
+                            context.pop();
+                          } else {
+                            context.go(AppConstants.routeLogin);
+                          }
+                        },
                         child: Text(
                           'Đăng nhập ngay',
                           style: Theme.of(context).textTheme.labelMedium?.copyWith(
