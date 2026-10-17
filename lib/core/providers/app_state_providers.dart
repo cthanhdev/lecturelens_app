@@ -53,3 +53,23 @@ final unreadNotificationCountProvider = Provider<int>((ref) {
   final list = ref.watch(notificationsProvider);
   return list.where((n) => !n.isRead).length;
 });
+
+/// Provider bật/tắt thông báo đẩy
+final notificationsEnabledProvider = StateProvider<bool>((ref) => true);
+
+/// Provider khóa ứng dụng bảo mật FaceID / PIN (Stub cục bộ)
+final appLockEnabledProvider = StateProvider<bool>((ref) => false);
+
+/// Provider ngôn ngữ hiển thị
+final selectedLanguageProvider = StateProvider<String>((ref) => 'Tiếng Việt');
+
+/// Provider tài khoản liên kết xã hội (Stub cục bộ: Google, Apple, Microsoft, GitHub)
+final connectedAccountsProvider = StateProvider<Map<String, bool>>((ref) {
+  return {
+    'Google': true,
+    'Apple': false,
+    'Microsoft': false,
+    'GitHub': false,
+  };
+});
+

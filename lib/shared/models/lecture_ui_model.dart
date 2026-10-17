@@ -101,6 +101,52 @@ class LectureUiModel {
     this.aiMessages = const [],
   });
 
+  LectureUiModel copyWith({
+    String? id,
+    String? title,
+    String? subject,
+    String? university,
+    LectureStatus? status,
+    double? processingProgress,
+    String? processingStatusText,
+    String? remainingTimeText,
+    String? audioFileName,
+    String? audioFileSize,
+    int? durationSeconds,
+    int? topicsCount,
+    String? stickySnippet,
+    String? relativeTime,
+    int? resumePositionSeconds,
+    List<String>? tags,
+    bool? isBookmarked,
+    List<LectureTopicItem>? topics,
+    List<TranscriptSegment>? transcripts,
+    List<AiChatMessage>? aiMessages,
+  }) {
+    return LectureUiModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      subject: subject ?? this.subject,
+      university: university ?? this.university,
+      status: status ?? this.status,
+      processingProgress: processingProgress ?? this.processingProgress,
+      processingStatusText: processingStatusText ?? this.processingStatusText,
+      remainingTimeText: remainingTimeText ?? this.remainingTimeText,
+      audioFileName: audioFileName ?? this.audioFileName,
+      audioFileSize: audioFileSize ?? this.audioFileSize,
+      durationSeconds: durationSeconds ?? this.durationSeconds,
+      topicsCount: topicsCount ?? this.topicsCount,
+      stickySnippet: stickySnippet ?? this.stickySnippet,
+      relativeTime: relativeTime ?? this.relativeTime,
+      resumePositionSeconds: resumePositionSeconds ?? this.resumePositionSeconds,
+      tags: tags ?? this.tags,
+      isBookmarked: isBookmarked ?? this.isBookmarked,
+      topics: topics ?? this.topics,
+      transcripts: transcripts ?? this.transcripts,
+      aiMessages: aiMessages ?? this.aiMessages,
+    );
+  }
+
   /// Mock data phản ánh chính xác 100% các file thiết kế
   static List<LectureUiModel> mockLectures = const [
     LectureUiModel(

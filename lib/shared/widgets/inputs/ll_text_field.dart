@@ -13,6 +13,7 @@ class LlTextField extends StatelessWidget {
   final bool obscureText;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final ValueChanged<String>? onChanged;
   final int maxLines;
 
   const LlTextField({
@@ -25,6 +26,7 @@ class LlTextField extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType,
     this.validator,
+    this.onChanged,
     this.maxLines = 1,
   });
 
@@ -48,6 +50,7 @@ class LlTextField extends StatelessWidget {
           obscureText: obscureText,
           keyboardType: keyboardType,
           validator: validator,
+          onChanged: onChanged,
           maxLines: maxLines,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppColors.onSurface,

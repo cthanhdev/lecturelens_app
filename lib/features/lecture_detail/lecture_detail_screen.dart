@@ -52,20 +52,7 @@ class _LectureDetailScreenState extends State<LectureDetailScreen> with SingleTi
       orElse: () => LectureUiModel.mockLectures.first,
     );
 
-    if (widget.highlightSeconds != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        final min = widget.highlightSeconds! ~/ 60;
-        final sec = (widget.highlightSeconds! % 60).toString().padLeft(2, '0');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('✨ Đang làm nổi bật đoạn trích tìm kiếm tại mốc $min:$sec'),
-            duration: const Duration(seconds: 3),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      });
-    }
+    // Highlight text is handled in-place by the transcript tab
   }
 
   @override
@@ -75,13 +62,7 @@ class _LectureDetailScreenState extends State<LectureDetailScreen> with SingleTi
   }
 
   void _seekAudio(int seconds) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Đang tua đến vị trí ${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}'),
-        duration: const Duration(seconds: 1),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    // Audio player updates position in-place
   }
 
   @override

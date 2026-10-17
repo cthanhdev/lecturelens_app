@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/constants/asset_paths.dart';
+import '../../../core/motion/app_motion_tokens.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_shadows.dart';
 import '../../../core/utils/duration_formatter.dart';
@@ -30,94 +31,103 @@ class LectureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.surfaceCard,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: AppColors.outline.withValues(alpha: 0.7),
-          width: 1,
-        ),
-        boxShadow: AppShadows.level1,
-      ),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          // Washi tape accent on top
-          const Positioned(
-            top: -6,
-            right: 32,
-            child: WashiTapeAccent(
-              color: WashiTapeColor.sakuraPink,
-              rotationAngle: -0.03,
-            ),
+    return LlPressable(
+      scaleFactor: AppMotionTokens.pressScale,
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: AppColors.surfaceCard,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: AppColors.outline.withValues(alpha: 0.7),
+            width: 1,
           ),
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(24),
-              onTap: onTap,
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Top row: Status Chip + Subject Tag + Bookmark Button
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              StatusChip(status: lecture.status),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: SubjectChip(
-                                  label: lecture.subject,
-                                  secondaryLabel: lecture.university,
-                                ),
+          boxShadow: AppShadows.level1,
+        ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // Washi tape accent on top
+            const Positioned(
+              top: -6,
+              right: 32,
+              child: WashiTapeAccent(
+                color: WashiTapeColor.sakuraPink,
+                rotationAngle: -0.03,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Top row: Status Chip + Subject Tag + Bookmark Button
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            StatusChip(status: lecture.status),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: SubjectChip(
+                                label: lecture.subject,
+                                secondaryLabel: lecture.university,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 10),
-                        LlPressable(
+                      ),
+                      const SizedBox(width: 10),
+                      Semantics(
+                        label: lecture.isBookmarked ? 'Bỏ lưu bài giảng' : 'Lưu bài giảng',
+                        button: true,
+                        child: LlPressable(
                           scaleFactor: 0.88,
                           onTap: onBookmarkTap,
                           child: Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              color: lecture.isBookmarked
-                                  ? AppColors.sakuraPinkLight.withValues(alpha: 0.6)
-                                  : AppColors.surfaceContainerLow,
-                              shape: BoxShape.circle,
-                              border: Border.all(
+                            width: 44,
+                            height: 44,
+                            alignment: Alignment.center,
+                            child: AnimatedContainer(
+                              duration: AppMotionTokens.short,
+                              curve: AppMotionTokens.springOut,
+                              width: 38,
+                              height: 38,
+                              decoration: BoxDecoration(
                                 color: lecture.isBookmarked
-                                    ? AppColors.sakuraPink
-                                    : AppColors.outline.withValues(alpha: 0.6),
-                                width: 1,
+                                    ? AppColors.sakuraPinkLight.withValues(alpha: 0.6)
+                                    : AppColors.surfaceContainerLow,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: lecture.isBookmarked
+                                      ? AppColors.sakuraPink
+                                      : AppColors.outline.withValues(alpha: 0.6),
+                                  width: 1,
+                                ),
                               ),
-                            ),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                AssetPaths.icBookmark,
-                                width: 16,
-                                height: 16,
-                                colorFilter: ColorFilter.mode(
-                                  lecture.isBookmarked
-                                      ? AppColors.primary
-                                      : AppColors.onSurfaceVariant,
-                                  BlendMode.srcIn,
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  AssetPaths.icBookmark,
+                                  width: 16,
+                                  height: 16,
+                                  colorFilter: ColorFilter.mode(
+                                    lecture.isBookmarked
+                                        ? AppColors.primary
+                                        : AppColors.onSurfaceVariant,
+                                    BlendMode.srcIn,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 14),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
 
                     // Lecture Title
                     Text(
@@ -362,10 +372,9 @@ class LectureCard extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    );
+        ),
+      );
   }
 }

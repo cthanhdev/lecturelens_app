@@ -14,6 +14,8 @@ export 'chips/timestamp_chip.dart';
 export 'inputs/ll_search_bar.dart';
 export 'inputs/ll_text_field.dart';
 export 'interactive/ll_pressable.dart';
+export 'interactive/ll_spring_switch.dart';
+export 'interactive/ll_segmented_control.dart';
 export 'mascot/cu_meo_empty_state.dart';
 export 'mascot/cu_meo_widget.dart';
 export 'navigation/ll_bottom_nav_bar.dart';

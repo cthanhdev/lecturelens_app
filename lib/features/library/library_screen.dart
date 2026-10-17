@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/motion/app_motion_tokens.dart';
 import '../../core/theme/app_colors.dart';
 import '../../shared/models/lecture_ui_model.dart';
 import '../../shared/widgets/cards/lecture_card.dart';
@@ -41,6 +42,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   int _currentNavIndex = 0;
   final ScrollController _scrollController = ScrollController();
   bool _isChromeVisible = true;
+  final Set<String> _bookmarkedIds = {'lec_1'};
 
   @override
   void initState() {
@@ -267,35 +269,44 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             final lecture = lectures[index];
-                            final cardWidget = lecture.status == LectureStatus.processing
+                            final displayLecture = lecture.copyWith(
+                              isBookmarked: _bookmarkedIds.contains(lecture.id),
+                            );
+
+                            final cardWidget = displayLecture.status == LectureStatus.processing
                                 ? ProcessingCard(
-                                    lecture: lecture,
+                                    lecture: displayLecture,
                                     onCancel: () {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Đã hủy tác vụ xử lý.')),
-                                      );
+                                      // In-place cancellation state
+                                      setState(() {});
                                     },
                                   )
                                 : LectureCard(
-                                    lecture: lecture,
-                                    onTap: () => context.push('/lecture/${lecture.id}'),
-                                    onPlayResumeTap: () => context.push('/lecture/${lecture.id}'),
+                                    lecture: displayLecture,
+                                    onTap: () => context.push('/lecture/${displayLecture.id}'),
+                                    onPlayResumeTap: () => context.push('/lecture/${displayLecture.id}'),
                                     onBookmarkTap: () {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: Text('Đã lưu bài giảng "${lecture.title}"'),
-                                          behavior: SnackBarBehavior.floating,
-                                        ),
-                                      );
+                                      // In-place bookmark toggle (replaces SnackBar)
+                                      setState(() {
+                                        if (_bookmarkedIds.contains(displayLecture.id)) {
+                                          _bookmarkedIds.remove(displayLecture.id);
+                                        } else {
+                                          _bookmarkedIds.add(displayLecture.id);
+                                        }
+                                      });
                                     },
                                   );
+
+                            final staggerDelay = index < AppMotionTokens.listStaggerMaxItems
+                                ? (index * AppMotionTokens.listStaggerDelay.inMilliseconds).ms
+                                : 0.ms;
 
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 20),
                               child: cardWidget
-                                  .animate(delay: (140 + index * 55).clamp(0, 420).ms)
-                                  .fadeIn(duration: 300.ms, curve: Curves.easeOutCubic)
-                                  .slideY(begin: 0.06, end: 0, duration: 300.ms, curve: Curves.easeOutCubic),
+                                  .animate(delay: staggerDelay)
+                                  .fadeIn(duration: 260.ms, curve: AppMotionTokens.appleSpringCurve)
+                                  .slideY(begin: 0.04, end: 0, duration: 260.ms, curve: AppMotionTokens.appleSpringCurve),
                             );
                           },
                           childCount: lectures.length,

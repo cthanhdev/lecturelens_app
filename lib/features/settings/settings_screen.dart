@@ -1,72 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/providers/app_state_providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../shared/widgets/dot_background.dart';
+import '../../shared/widgets/interactive/ll_spring_switch.dart';
 import '../../shared/widgets/ll_app_bar.dart';
-import 'widgets/app_info_card.dart';
+import 'widgets/ios_grouped_list.dart';
 import 'widgets/profile_card.dart';
+import 'widgets/settings_modals.dart';
 import 'widgets/theme_selector.dart';
 
-/// !IMPORTANT: Màn Hình Cài Đặt & Hồ Sơ (Settings Screen)
-/// CHỈ DẪN: Quản lý thông tin tài khoản sinh viên, chuyển đổi Theme Sáng/Tối,
-/// và thông tin phiên bản bản quyền ứng dụng.
-class SettingsScreen extends StatelessWidget {
+/// !IMPORTANT: Màn Hình Cài Đặt & Hồ Sơ (iOS Grouped Inset Settings Screen)
+/// CHỈ DẪN: Bố cục chuẩn Apple HIG với cấu trúc Grouped Inset List:
+/// - Header hồ sơ (Avatar, tên, email, nút Chỉnh sửa)
+/// - Nhóm 1: Tài khoản (Đổi mật khẩu, Tài khoản liên kết)
+/// - Nhóm 2: Tùy chọn (Bật/tắt thông báo, Giao diện Segmented, Ngôn ngữ)
+/// - Nhóm 3: Quyền riêng tư & Bảo mật (Quản lý quyền, Khóa ứng dụng Face ID)
+/// - Nhóm 4: Trợ giúp & Thông tin (Liên hệ, Điều khoản, Chính sách, Phiên bản)
+/// - Nhóm 5: Đăng xuất & Xóa tài khoản 2 bước
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
-  void _confirmLogout(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogCtx) => AlertDialog(
-        backgroundColor: AppColors.surfaceCard,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: const BorderSide(color: AppColors.outline),
-        ),
-        title: const Row(
-          children: [
-            Icon(Icons.logout_rounded, color: Color(0xFFE11D48), size: 22),
-            SizedBox(width: 8),
-            Text(
-              'Đăng xuất tài khoản',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
-            ),
-          ],
-        ),
-        content: const Text(
-          'Bạn có chắc chắn muốn đăng xuất khỏi LectureLens? Tất cả bài giảng đã lưu trữ vẫn sẽ an toàn trên thiết bị của bạn.',
-          style: TextStyle(fontSize: 14, height: 1.4, color: AppColors.onSurfaceVariant),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: const Text(
-              'Ở lại học tiếp',
-              style: TextStyle(color: AppColors.onSurfaceVariant, fontWeight: FontWeight.w600),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFE11D48),
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              elevation: 0,
-            ),
-            onPressed: () {
-              Navigator.of(dialogCtx).pop();
-              context.go(AppConstants.routeLogin);
-            },
-            child: const Text('Đăng xuất'),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notificationsEnabled = ref.watch(notificationsEnabledProvider);
+    final appLockEnabled = ref.watch(appLockEnabledProvider);
+    final selectedLang = ref.watch(selectedLanguageProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const LlAppBar(
@@ -83,13 +45,178 @@ class SettingsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                ProfileCard(
-                  onLogout: () => _confirmLogout(context),
+                // 1. Header Hồ Sơ Sinh Viên
+                const ProfileCard(),
+                const SizedBox(height: 24),
+
+                // 2. Nhóm Tài Khoản
+                IosGroupedSection(
+                  headerTitle: 'Tài khoản',
+                  children: [
+                    IosGroupedTile(
+                      leading: const Icon(Icons.key_rounded, size: 18, color: AppColors.primary),
+                      leadingBgColor: isDark ? AppColors.darkSurfaceContainer : AppColors.surfaceContainer,
+                      title: 'Đổi mật khẩu',
+                      subtitle: 'Bảo vệ tài khoản sinh viên',
+                      showChevron: true,
+                      onTap: () => SettingsModals.showChangePassword(context),
+                    ),
+                    IosGroupedTile(
+                      leading: const Icon(Icons.link_rounded, size: 18, color: AppColors.primary),
+                      leadingBgColor: isDark ? AppColors.darkSurfaceContainer : AppColors.surfaceContainer,
+                      title: 'Tài khoản liên kết',
+                      subtitle: 'Google, Apple, Microsoft, GitHub',
+                      value: 'Google đã bật',
+                      showChevron: true,
+                      onTap: () => SettingsModals.showLinkedAccounts(context, ref),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                const ThemeSelector(),
-                const SizedBox(height: 16),
-                const AppInfoCard(),
+
+                // 3. Nhóm Tùy Chọn
+                IosGroupedSection(
+                  headerTitle: 'Tùy chọn hiển thị & âm thanh',
+                  children: [
+                    IosGroupedTile(
+                      leading: const Icon(Icons.notifications_active_outlined, size: 18, color: AppColors.primary),
+                      leadingBgColor: isDark ? AppColors.darkSurfaceContainer : AppColors.surfaceContainer,
+                      title: 'Thông báo đẩy',
+                      subtitle: 'Cập nhật tiến độ xử lý & nhắc nhở ôn bài',
+                      trailing: LlSpringSwitch(
+                        value: notificationsEnabled,
+                        semanticsLabel: 'Công tắc thông báo đẩy',
+                        onChanged: (val) {
+                          ref.read(notificationsEnabledProvider.notifier).state = val;
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                width: 34,
+                                height: 34,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: isDark ? AppColors.darkSurfaceContainer : AppColors.surfaceContainer,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(Icons.palette_outlined, size: 18, color: AppColors.primary),
+                              ),
+                              const SizedBox(width: 14),
+                              Text(
+                                'Giao diện ứng dụng',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark ? AppColors.darkOnSurface : AppColors.onSurface,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          const ThemeSelector(),
+                        ],
+                      ),
+                    ),
+                    IosGroupedTile(
+                      leading: const Icon(Icons.language_rounded, size: 18, color: AppColors.primary),
+                      leadingBgColor: isDark ? AppColors.darkSurfaceContainer : AppColors.surfaceContainer,
+                      title: 'Ngôn ngữ',
+                      value: selectedLang,
+                      showChevron: true,
+                      onTap: () => SettingsModals.showLanguagePicker(context, ref),
+                    ),
+                  ],
+                ),
+
+                // 4. Nhóm Quyền Riêng Tư & Bảo Mật
+                IosGroupedSection(
+                  headerTitle: 'Quyền riêng tư & Bảo mật',
+                  children: [
+                    IosGroupedTile(
+                      leading: const Icon(Icons.security_rounded, size: 18, color: AppColors.mintGreenDark),
+                      leadingBgColor: AppColors.mintGreenLight,
+                      title: 'Quản lý quyền ứng dụng',
+                      subtitle: 'Microphone, Bộ nhớ, Thông báo',
+                      showChevron: true,
+                      onTap: () => SettingsModals.showPermissions(context),
+                    ),
+                    IosGroupedTile(
+                      leading: const Icon(Icons.fingerprint_rounded, size: 18, color: AppColors.primary),
+                      leadingBgColor: isDark ? AppColors.darkSurfaceContainer : AppColors.surfaceContainer,
+                      title: 'Khóa ứng dụng',
+                      subtitle: 'Yêu cầu Face ID / PIN khi mở app (Stub)',
+                      trailing: LlSpringSwitch(
+                        value: appLockEnabled,
+                        semanticsLabel: 'Khóa ứng dụng bằng Face ID hoặc PIN',
+                        onChanged: (val) {
+                          ref.read(appLockEnabledProvider.notifier).state = val;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+
+                // 5. Nhóm Trợ Giúp & Thông Tin
+                IosGroupedSection(
+                  headerTitle: 'Trợ giúp & Thông tin',
+                  footerText: 'LectureLens — AI Lecture Companion v${AppConstants.appVersion}\nMô hình nhận diện giọng nói tiếng Việt Whisper Large v3',
+                  children: [
+                    IosGroupedTile(
+                      leading: const Icon(Icons.help_outline_rounded, size: 18, color: AppColors.primary),
+                      leadingBgColor: isDark ? AppColors.darkSurfaceContainer : AppColors.surfaceContainer,
+                      title: 'Liên hệ hỗ trợ sinh viên',
+                      subtitle: 'support@lecturelens.edu.vn',
+                      showChevron: true,
+                      onTap: () => SettingsModals.showSupport(context),
+                    ),
+                    IosGroupedTile(
+                      leading: const Icon(Icons.description_outlined, size: 18, color: AppColors.primary),
+                      leadingBgColor: isDark ? AppColors.darkSurfaceContainer : AppColors.surfaceContainer,
+                      title: 'Điều khoản dịch vụ',
+                      showChevron: true,
+                      onTap: () => SettingsModals.showTermsAndPrivacy(context, isTerms: true),
+                    ),
+                    IosGroupedTile(
+                      leading: const Icon(Icons.privacy_tip_outlined, size: 18, color: AppColors.primary),
+                      leadingBgColor: isDark ? AppColors.darkSurfaceContainer : AppColors.surfaceContainer,
+                      title: 'Chính sách bảo mật',
+                      showChevron: true,
+                      onTap: () => SettingsModals.showTermsAndPrivacy(context, isTerms: false),
+                    ),
+                    IosGroupedTile(
+                      leading: const Icon(Icons.info_outline_rounded, size: 18, color: AppColors.primary),
+                      leadingBgColor: isDark ? AppColors.darkSurfaceContainer : AppColors.surfaceContainer,
+                      title: 'Phiên bản ứng dụng',
+                      value: AppConstants.appVersion,
+                    ),
+                  ],
+                ),
+
+                // 6. Nhóm Hành Động Phá Hủy (Destructive)
+                IosGroupedSection(
+                  children: [
+                    IosGroupedTile(
+                      leading: const Icon(Icons.logout_rounded, size: 18, color: Color(0xFFE11D48)),
+                      title: 'Đăng xuất',
+                      isDestructive: true,
+                      onTap: () => SettingsModals.showLogoutConfirm(context),
+                    ),
+                    IosGroupedTile(
+                      leading: const Icon(Icons.delete_forever_rounded, size: 18, color: Color(0xFFE11D48)),
+                      title: 'Xóa tài khoản vĩnh viễn',
+                      subtitle: 'Xác nhận 2 bước an toàn',
+                      isDestructive: true,
+                      onTap: () => SettingsModals.showDeleteAccount(context),
+                    ),
+                  ],
+                ),
+
                 const SizedBox(height: 24),
               ],
             ),

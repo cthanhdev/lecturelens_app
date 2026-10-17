@@ -44,3 +44,10 @@ symbols/
 **/android/**/GeneratedPluginRegistrant.java
 # Widget Preview related
 .widget_preview/
+
+# iOS Signing & Package Artifacts
+*.ipa
+*.p12
+*.mobileprovision
+*.cer
+*.key

@@ -5,13 +5,15 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/asset_paths.dart';
+import '../../core/motion/app_motion_tokens.dart';
 import '../../core/providers/app_state_providers.dart';
 import '../../core/theme/app_colors.dart';
+import 'interactive/ll_pressable.dart';
 import 'notification_badge.dart';
 
-/// !IMPORTANT: App Bar chuẩn của LectureLens
+/// !IMPORTANT: App Bar chuẩn của LectureLens (Chuẩn Apple HIG & Theme thích ứng)
 /// CHỈ DẪN: Hiển thị Logo Cú Mèo và tên "LectureLens" bên trái,
-/// Chuông thông báo và Avatar người dùng bên phải với hiệu ứng kính mờ.
+/// Chuông thông báo và Avatar người dùng bên phải với hiệu ứng kính mờ và màu nền thích ứng Light/Dark.
 class LlAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final String? title;
   final String? subtitle;
@@ -43,11 +45,16 @@ class LlAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userProfile = ref.watch(userProfileProvider);
     final unreadCount = ref.watch(unreadNotificationCountProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final barBgColor = isDark
+        ? AppColors.darkCanvas.withValues(alpha: 0.85)
+        : AppColors.canvasCream.withValues(alpha: 0.85);
+
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
         child: Container(
-          color: AppColors.canvasCream.withValues(alpha: 0.85),
+          color: barBgColor,
           padding: const EdgeInsets.symmetric(horizontal: 16),
           alignment: Alignment.center,
           child: SafeArea(
@@ -60,17 +67,30 @@ class LlAppBar extends ConsumerWidget implements PreferredSizeWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (showBack)
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-                        color: AppColors.onSurface,
-                        onPressed: onBackPressed ??
-                            () {
-                              if (context.canPop()) {
-                                context.pop();
-                              } else {
-                                context.go(AppConstants.routeLibrary);
-                              }
-                            },
+                      Semantics(
+                        label: 'Quay lại',
+                        button: true,
+                        child: LlPressable(
+                          scaleFactor: AppMotionTokens.pressScale,
+                          onTap: onBackPressed ??
+                              () {
+                                if (context.canPop()) {
+                                  context.pop();
+                                } else {
+                                  context.go(AppConstants.routeLibrary);
+                                }
+                              },
+                          child: Container(
+                            width: 44,
+                            height: 44,
+                            alignment: Alignment.center,
+                            child: const Icon(
+                              Icons.arrow_back_ios_new_rounded,
+                              size: 20,
+                              color: AppColors.onSurface,
+                            ),
+                          ),
+                        ),
                       )
                     else if (showLogo) ...[
                       SvgPicture.asset(
@@ -113,34 +133,46 @@ class LlAppBar extends ConsumerWidget implements PreferredSizeWidget {
                     if (showNotifications) ...[
                       NotificationBadge(
                         unreadCount: unreadCount,
-                        onTap: onNotificationTap,
+                        onTap: onNotificationTap ??
+                            () => context.push(AppConstants.routeNotifications),
                       ),
                       const SizedBox(width: 10),
                     ],
-                    GestureDetector(
-                      onTap: onAvatarTap,
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.surfaceContainerHigh,
-                          border: Border.all(
-                            color: AppColors.primaryContainer.withValues(alpha: 0.3),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: ClipOval(
+                    Semantics(
+                      label: 'Hồ sơ người dùng ${userProfile.name}',
+                      button: true,
+                      child: LlPressable(
+                        scaleFactor: AppMotionTokens.pressScale,
+                        onTap: onAvatarTap ??
+                            () => context.push(AppConstants.routeSettings),
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          alignment: Alignment.center,
                           child: Container(
-                            color: AppColors.primaryLight,
-                            child: Center(
-                              child: Text(
-                                userProfile.avatarInitial,
-                                style: const TextStyle(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                            width: 38,
+                            height: 38,
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.surfaceContainerHigh,
+                              border: Border.all(
+                                color: AppColors.primaryContainer.withValues(alpha: 0.3),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: ClipOval(
+                              child: Container(
+                                color: AppColors.primaryLight,
+                                child: Center(
+                                  child: Text(
+                                    userProfile.avatarInitial,
+                                    style: const TextStyle(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),

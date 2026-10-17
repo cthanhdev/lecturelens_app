@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../constants/app_constants.dart';
+import '../motion/app_motion_tokens.dart';
 import '../../features/splash/splash.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/auth/login/login_screen.dart';
@@ -128,18 +129,26 @@ class AppRouter {
       transitionDuration: const Duration(milliseconds: 320),
       reverseTransitionDuration: const Duration(milliseconds: 260),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final reduceMotion = AppMotionTokens.shouldReduceMotion(context);
+        if (reduceMotion) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        }
+
         final curvedIn = CurvedAnimation(
           parent: animation,
-          curve: Curves.easeOutCubic,
+          curve: AppMotionTokens.appleSpringCurve,
           reverseCurve: Curves.easeInCubic,
         );
         final curvedOut = CurvedAnimation(
           parent: secondaryAnimation,
-          curve: Curves.easeOutCubic,
+          curve: AppMotionTokens.appleSpringCurve,
           reverseCurve: Curves.easeInCubic,
         );
 
-        // Trang đang vào
+        // Trang đang vào: slide nhẹ và zoom nhẹ kiểu Apple parallax
         final primarySlide = Tween<Offset>(
           begin: beginOffset,
           end: Offset.zero,
@@ -151,8 +160,8 @@ class AppRouter {
         ).animate(
           CurvedAnimation(
             parent: animation,
-            curve: const Interval(0.12, 1.0, curve: Curves.easeOutCubic),
-            reverseCurve: const Interval(0.0, 0.88, curve: Curves.easeInCubic),
+            curve: const Interval(0.08, 1.0, curve: Curves.easeOut),
+            reverseCurve: const Interval(0.0, 0.9, curve: Curves.easeIn),
           ),
         );
 
@@ -164,12 +173,12 @@ class AppRouter {
         // Trang bị đẩy về sau (thoát nhẹ để không bị chồng lớp đè)
         final secondarySlide = Tween<Offset>(
           begin: Offset.zero,
-          end: Offset(-beginOffset.dx * 0.5, -beginOffset.dy * 0.5),
+          end: Offset(-beginOffset.dx * 0.4, -beginOffset.dy * 0.4),
         ).animate(curvedOut);
 
         final secondaryFade = Tween<double>(
           begin: 1.0,
-          end: 0.7,
+          end: 0.75,
         ).animate(curvedOut);
 
         return ColoredBox(

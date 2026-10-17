@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lecturelens_app/core/motion/app_motion_tokens.dart';
 import 'package:lecturelens_app/shared/widgets/interactive/ll_pressable.dart';
+import 'package:lecturelens_app/shared/widgets/interactive/ll_spring_switch.dart';
+import 'package:lecturelens_app/shared/widgets/interactive/ll_segmented_control.dart';
 import 'package:lecturelens_app/shared/widgets/mascot/cu_meo_widget.dart';
 import 'package:lecturelens_app/shared/widgets/audio/audio_progress_bar.dart';
 import 'package:lecturelens_app/shared/widgets/dot_background.dart';
@@ -143,6 +145,92 @@ void main() {
       expect(find.text('Content on Dot Paper'), findsOneWidget);
       expect(find.byType(RepaintBoundary), findsWidgets);
       expect(find.byType(CustomPaint), findsWidgets);
+    });
+  });
+
+  group('Apple Spring Tokens & Specifications Tests', () {
+    test('Spring descriptions match Apple HIG specs', () {
+      expect(AppMotionTokens.standardSpring.mass, 1.0);
+      expect(AppMotionTokens.standardSpring.stiffness, 260.0);
+      expect(AppMotionTokens.standardSpring.damping, 22.0);
+
+      expect(AppMotionTokens.fastSpring.mass, 1.0);
+      expect(AppMotionTokens.fastSpring.stiffness, 400.0);
+      expect(AppMotionTokens.fastSpring.damping, 30.0);
+
+      expect(AppMotionTokens.bouncySpring.mass, 1.0);
+      expect(AppMotionTokens.bouncySpring.stiffness, 300.0);
+      expect(AppMotionTokens.bouncySpring.damping, 16.0);
+
+      expect(AppMotionTokens.pressScale, 0.96);
+      expect(AppMotionTokens.listStaggerDelay, const Duration(milliseconds: 35));
+      expect(AppMotionTokens.listStaggerMaxItems, 8);
+    });
+  });
+
+  group('LlSpringSwitch Tests', () {
+    testWidgets('Renders toggle and triggers onChanged with spring animation', (tester) async {
+      bool switchVal = false;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (context, setState) {
+                return LlSpringSwitch(
+                  value: switchVal,
+                  onChanged: (val) {
+                    setState(() => switchVal = val);
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(LlSpringSwitch), findsOneWidget);
+      await tester.tap(find.byType(LlSpringSwitch));
+      await tester.pumpAndSettle();
+
+      expect(switchVal, isTrue);
+    });
+  });
+
+  group('LlSegmentedControl Tests', () {
+    testWidgets('Renders segmented items and updates selection', (tester) async {
+      int selectedIdx = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (context, setState) {
+                return LlSegmentedControl<int>(
+                  selectedValue: selectedIdx,
+                  onValueChanged: (val) {
+                    setState(() => selectedIdx = val);
+                  },
+                  items: const [
+                    SegmentItem(value: 0, label: 'Mục 1'),
+                    SegmentItem(value: 1, label: 'Mục 2'),
+                    SegmentItem(value: 2, label: 'Mục 3'),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Mục 1'), findsOneWidget);
+      expect(find.text('Mục 2'), findsOneWidget);
+      expect(find.text('Mục 3'), findsOneWidget);
+
+      await tester.tap(find.text('Mục 2'));
+      await tester.pumpAndSettle();
+
+      expect(selectedIdx, 1);
     });
   });
 }
